@@ -1,5 +1,5 @@
 data/
-.venv_nexialog
+.venv_pd
 *.pyc
 __pycache__/
 brouillon.ipynb
