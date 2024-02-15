@@ -1,1 +1,5 @@
 FLAG_OWN_CAR : peut être croisé à OWN_CAR_AGE pour traiter les valeurs manquantes
+- Prendre l'échantillon train : la dernière année comme échantillon out of sample; sur le reste construire echantillon d'entrainement et echantillon de calibration
+- checker le programme decody pour faire du optimum chi2
+Pour les modèles, sous statsmodels, passer par formula et spécifier les variables catégorielles 
+Commence avec les variables binaires pour tej (stabilité/volume)
