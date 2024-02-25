@@ -17,3 +17,5 @@ NAME_FAMILY_STATUS : groups {
 
 variable with strong predicted power with IV : FAM_STATS_CHILD, NAME_EDUCATION_TYPE (transformed)
  
+
+ Variable résumée : comportememnt passé CB (overdue et compagnies)
