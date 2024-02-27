@@ -26,7 +26,7 @@ def grid_score(data_train,results_model_logit, variables_utilisees) -> pd.DataFr
             modalite = modalite.replace("T.","")
         modalites_variables.append(modalite)
 
-    df_coef = pd.DataFrame({'Variable': variables_logit, 'Modalités': modalites_variables, 'Coefficient' : list(model_logit.params), 'p-value' : list(model_logit.pvalues)})
+    df_coef = pd.DataFrame({'Variable': variables_logit, 'Modalités': modalites_variables, 'Coefficient' : list(results_model_logit.params), 'p-value' : list(results_model_logit.pvalues)})
 
     # variables_utilisees = ["OCCUPATION_TYPE", "NAME_EDUCATION_TYPE"  , "AMT_CREDIT_NORM" , "BORROWER_AGE" , "BORROWER_SENIORITY" , "CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT"]
     grid = {'Variable':[],'Modalités':[],'effectif':[],}
