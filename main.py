@@ -1,4 +1,5 @@
 # import packages 
+import openpyxl
 import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,12 +9,14 @@ from scipy.stats import mannwhitneyu ,chi2_contingency, anderson, f_oneway
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
 import statsmodels.api as sm
+from jenkspy import JenksNaturalBreaks
 import warnings
 warnings.filterwarnings("ignore")
 
 
 from src.preprocessing import convert_numeric_to_category, DecisionTreeDiscretizer
 from src.tests import cramers_v, mannwhitney_test, calculate_information_value_from_contingency_table, show_conditionnal_density, show_risk_stability_overtime, show_volume_stability_overtime
+from src.score import grid_score, attribute_score, subplot_segment_default_rate
 print("Importation de packages terminée")
 
 data=pd.read_csv("data/application_train_vf.csv",parse_dates=["date_mensuelle"], index_col=0)
@@ -256,9 +259,124 @@ print("Performance sur le train")
 y_train_proba=model_logit.predict(data_train)
 gini=2*roc_auc_score(data_train["TARGET"],y_train_proba) - 1
 print(f"{gini = :.3f}")
+print(40*"=")
 
 
 print("Performance sur le test")
 y_test_proba=model_logit.predict(data_test)
 gini=2*roc_auc_score(data_test["TARGET"],y_test_proba) - 1
 print(f"{gini = :.3f}")
+print(40*"=")
+
+print("Phase de scoring")
+liste_variables_utilisees = ["OCCUPATION_TYPE", "NAME_EDUCATION_TYPE"  , "AMT_CREDIT_NORM" , "BORROWER_AGE" , "BORROWER_SENIORITY" , "CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT"]
+grille = grid_score(data_train,model_logit, liste_variables_utilisees)
+
+
+grille.to_excel("data/grille_de_score.xlsx")
+print("La grille de score est exportée au dossier data au nom de grille_de_score")
+
+
+attribute_score(grille,data_train)
+attribute_score(grille,data_test)
+
+print("Densité conditionnelle des notes du set d'entrainement")
+show_conditionnal_density(data_train,"Note")
+
+print("Densité conditionnelle des notes du set d'entrainement")
+show_conditionnal_density(data_test,"Note")
+
+segment=JenksNaturalBreaks(n_classes=7)
+segment.fit(data_train["Note"].values)
+
+print(f"Les seuils de découpage sont {segment.breaks_}")
+
+data_train["Segment"]=segment.predict(data_train["Note"].values)
+data_test["Segment"]=segment.predict(data_test["Note"].values)
+
+subplot_segment_default_rate(data_train)
+
+subplot_segment_default_rate(data_test)
+
+show_volume_stability_overtime(data_train,"Segment",0.03)
+
+show_risk_stability_overtime(data_train,"Segment")
+
+print("Phase de calibrage du modèle : méthode d'inférence non paramétrique")
+print("Calcul de la MoC C par CHR")
+
+# Nombre d'échantillons bootstrap par segment
+num_bootstrap_samples = 1000
+moc_c_segment={}
+
+def default_rate_calculation(sample):
+    return np.mean(sample)
+
+# Boucle pour chaque segment
+for segment in range(7):
+    # Echantillons bootstrap
+    sample_size=data_test[data_test["Segment"]==segment].shape[0]
+    bootstrap_samples = [data_test[data_test["Segment"]==segment].sample(frac=1, replace=True)["TARGET"].values for _ in range(num_bootstrap_samples)]
+    
+    # Default rate
+    default_rates = [default_rate_calculation(sample) for sample in bootstrap_samples]
+    
+    # Calculer le 90e centile et la moyenne
+    percentile_90 = np.percentile(default_rates, 90)
+    mean_rate = np.mean(default_rates)
+    moc_c=percentile_90 - mean_rate
+    moc_c_segment[segment]=moc_c
+    
+    temp_df = pd.DataFrame({
+        'Size':[sample_size],
+        'Segment': [segment],
+        'Percentile_90': [percentile_90],
+        'Mean_Rate': [mean_rate],
+        "MoC_C": [moc_c]
+    })
+    
+    print(temp_df)
+
+print(60*"-")
+print("Calcul de la MoC A par CHR")
+
+
+moc_a_segment={}
+
+def calculate_adjustment(sample:pd.DataFrame):
+    ajustement=sample.loc[sample["date_annee"]<2019,"TARGET"].mean() - sample["TARGET"].mean()
+    return ajustement
+
+for segment in range(7):
+    # Echantillons bootstrap
+    sample_size=data_test[data_test["Segment"]==segment].shape[0]
+    bootstrap_samples = [data_test[data_test["Segment"]==segment].sample(frac=1, replace=True)[["TARGET","date_annee"]] for _ in range(num_bootstrap_samples)]
+    
+    # Calcul de l'ajustement sur chaque echantillon
+    adjustments = [calculate_adjustment(sample) for sample in bootstrap_samples]
+    
+    percentile_90 = np.percentile(adjustments, 90)
+    mean_rate = np.mean(adjustments)
+    moc_a= percentile_90 - mean_rate
+    moc_a_segment[segment] = moc_a
+    
+    temp_df_a = pd.DataFrame({
+        'Size':[sample_size],
+        'Segment': [segment],
+        'Percentile_90': [percentile_90],
+        'Mean_Rate': [mean_rate],
+        "MoC_A": [moc_a]
+    })
+    
+    print(temp_df_a)
+
+
+lra=data_train[["Segment","TARGET"]].groupby("Segment").mean()
+
+summary=pd.concat([lra, pd.DataFrame(list(moc_a_segment.values()), columns=["MOC_A"]), pd.DataFrame(list(moc_c_segment.values()), columns=["MOC_C"])], axis=1)
+
+summary["DEFAULT_RATE"]=summary.sum(axis=1)# calcul de la PD
+summary.rename(columns={"TARGET":"LRA"}, inplace=True)
+
+print(summary)
+print("FIN")
