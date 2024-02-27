@@ -309,21 +309,22 @@ print("Calcul de la MoC C par CHR")
 num_bootstrap_samples = 1000
 moc_c_segment={}
 
-def default_rate_calculation(sample):
-    return np.mean(sample)
+def lra_calculation(sample):
+    lra = sample.groupby("date_annee").mean().mean()
+    return lra.values
 
 # Boucle pour chaque segment
 for segment in range(7):
     # Echantillons bootstrap
     sample_size=data_test[data_test["Segment"]==segment].shape[0]
-    bootstrap_samples = [data_test[data_test["Segment"]==segment].sample(frac=1, replace=True)["TARGET"].values for _ in range(num_bootstrap_samples)]
+    bootstrap_samples = [data_test[data_test["Segment"]==segment].sample(frac=1, replace=True)[["TARGET","date_annee"]] for _ in range(num_bootstrap_samples)]
     
     # Default rate
-    default_rates = [default_rate_calculation(sample) for sample in bootstrap_samples]
+    lra_s = [lra_calculation(sample) for sample in bootstrap_samples]
     
     # Calculer le 90e centile et la moyenne
-    percentile_90 = np.percentile(default_rates, 90)
-    mean_rate = np.mean(default_rates)
+    percentile_90 = np.percentile(lra_s, 90)
+    mean_rate = np.mean(lra_s)
     moc_c=percentile_90 - mean_rate
     moc_c_segment[segment]=moc_c
     
@@ -341,25 +342,28 @@ print(60*"-")
 print("Calcul de la MoC A par CHR")
 
 
+#### Calcul de la MOC A
 moc_a_segment={}
 
 def calculate_adjustment(sample:pd.DataFrame):
-    ajustement=sample.loc[sample["date_annee"]<2019,"TARGET"].mean() - sample["TARGET"].mean()
-    return ajustement
+    ajustement=sample.loc[sample["date_annee"]<2019,["TARGET","date_annee"]].groupby("date_annee").mean().mean() - sample[["TARGET","date_annee"]].groupby("date_annee").mean().mean()
+    return ajustement.values
 
+# Boucle pour chaque segment
 for segment in range(7):
-    # Echantillons bootstrap
+    # Générer des échantillons bootstrap
     sample_size=data_test[data_test["Segment"]==segment].shape[0]
     bootstrap_samples = [data_test[data_test["Segment"]==segment].sample(frac=1, replace=True)[["TARGET","date_annee"]] for _ in range(num_bootstrap_samples)]
     
     # Calcul de l'ajustement sur chaque echantillon
     adjustments = [calculate_adjustment(sample) for sample in bootstrap_samples]
     
+    # Calculer le 90e centile et la moyenne
     percentile_90 = np.percentile(adjustments, 90)
     mean_rate = np.mean(adjustments)
     moc_a= percentile_90 - mean_rate
     moc_a_segment[segment] = moc_a
-    
+    # Créer un DataFrame temporaire pour le segment actuel
     temp_df_a = pd.DataFrame({
         'Size':[sample_size],
         'Segment': [segment],
@@ -371,11 +375,12 @@ for segment in range(7):
     print(temp_df_a)
 
 
-lra=data_train[["Segment","TARGET"]].groupby("Segment").mean()
+lra_=data_train[["date_annee","Segment","TARGET"]].groupby(["Segment","date_annee"]).mean().reset_index()
+lra=lra_[["Segment","TARGET"]].groupby("Segment").mean()
 
 summary=pd.concat([lra, pd.DataFrame(list(moc_a_segment.values()), columns=["MOC_A"]), pd.DataFrame(list(moc_c_segment.values()), columns=["MOC_C"])], axis=1)
 
-summary["DEFAULT_RATE"]=summary.sum(axis=1)# calcul de la PD
+summary["PD"]=summary.sum(axis=1)# calcul de la PD
 summary.rename(columns={"TARGET":"LRA"}, inplace=True)
 
 print(summary)
