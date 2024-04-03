@@ -133,3 +133,8 @@ def subplot_segment_default_rate(data):
     plt.title('Répartition des CHR et des taux de défaut par CHR')
     plt.show()
     pass
+
+
+def attribute_chr(score,threshold):
+    return pd.cut(score, bins=threshold, labels=[i for i in range(len(threshold))])
+
