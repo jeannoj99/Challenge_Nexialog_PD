@@ -2,3 +2,4 @@ data/
 .venv_pd/
 brouillon.ipynb
 .venv_pd2/
+__pycache__/
