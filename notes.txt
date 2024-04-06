@@ -1,5 +1,21 @@
 FLAG_OWN_CAR : peut être croisé à OWN_CAR_AGE pour traiter les valeurs manquantes
-- Prendre l'échantillon train : la dernière année comme échantillon out of sample; sur le reste construire echantillon d'entrainement et echantillon de calibration
-- checker le programme decody pour faire du optimum chi2
-Pour les modèles, sous statsmodels, passer par formula et spécifier les variables catégorielles 
-Commence avec les variables binaires pour tej (stabilité/volume)
+
+Slide 1 (graphe 1)
+- Opérations garanties de 1982 à 2017 entrées en défaut
+- Essor de l'immobilier vers 2005-2007
+- Eclatement de la bulle immobilière en 2008 et contagion
+- Problématique du changements des comportements et préférences individuels
+- Stabilité et robustesse des modèles de risque de crédit
+
+Slide 2 (graphe 2 + graphe 3)
+- Taux de recouvrement très peu variable sur les dernières années
+- Quasi-équirépartition des opérations à sommes totalement recouvrées
+
+Slide 3 (Variables retenues et traitement)
+Variables retenues
+- Situation socio-économique de la contrepartie (age, situation matrimoniale, revenus, charges,  etc.)
+- Caractéristiques du prêt (localisation bien, nature, durée, etc.)
+- Elements de procédure de recouvrement (modèle de durée)
+
+- Découpage en tranches des variables numériques
+- Regroupement des catégories ayant des profils de risque similaire
