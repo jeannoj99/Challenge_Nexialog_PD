@@ -180,5 +180,9 @@ def redirect_to_home(n_clicks_nexialog, n_clicks_mosef):
     else:
         # If no clicks on logos, stay on current page
         return dash.no_update
+    
+
+
+    
 if __name__ == "__main__":
     app.run_server(debug=True)
