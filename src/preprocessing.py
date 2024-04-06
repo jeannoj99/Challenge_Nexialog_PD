@@ -3,11 +3,20 @@ import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import roc_auc_score
 
+def convert_numeric_to_category(df: pd.DataFrame):
+    for colname in df.columns.tolist():
+        if (df[colname].dtype=="number") & (df[colname].nunique() <=10):
+            df[colname]=df[colname].astype("category")
+            pass
+        else:
+            pass
+
 class DecisionTreeDiscretizer:
     def __init__(self, max_bins=5, target=None):
         self.tree_max_bins = max_bins
-        self.clf = DecisionTreeClassifier(criterion="gini", max_depth=self.tree_max_bins//2,
-                                          min_samples_split=0.05, min_samples_leaf=0.05)
+        self.clf = DecisionTreeClassifier(criterion="gini", max_depth=int(round(self.tree_max_bins/2)),
+                                          min_samples_split=0.05,
+                                           min_samples_leaf=0.05) #
         self.target = target
 
     def fit(self, X_train):
