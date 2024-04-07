@@ -18,10 +18,17 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, dcc, html
 
+# juste des notes
+
+#BS = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+# app = dash.Dash(external_stylesheets=[BS]) mettre un lien bootstrap en particulier
+
 # link fontawesome to get the chevron icons
 app = dash.Dash(
-    external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME]
+    external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME] 
+  
 )
+
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
 SIDEBAR_STYLE = {
@@ -47,7 +54,11 @@ submenu_1 = [
         # use Row and Col components to position the chevrons
         dbc.Row(
             [
-                dbc.Col("Méthodologie"),
+                dbc.Col(
+                    [html.Img(src="/assets/methodologie.png", height="20px", style={"margin-right": "5px"}), "Méthodologie"],
+                    width="auto",
+                    style={"cursor": "pointer"}
+                ),
                 dbc.Col(
                     html.I(className="fas fa-chevron-right me-3"),
                     width="auto",
@@ -73,7 +84,11 @@ submenu_2 = [
     html.Li(
         dbc.Row(
             [
-                dbc.Col("Utilité Métier"),
+                dbc.Col(
+                    [html.Img(src="/assets/croissance.png", height="20px", style={"margin-right": "5px"}), "Utilité Métier"],
+                    width="auto",
+                    style={"cursor": "pointer"}
+                ),
                 dbc.Col(
                     html.I(className="fas fa-chevron-right me-3"),
                     width="auto",
@@ -112,8 +127,8 @@ sidebar = html.Div(
 # Layout for the home page
 home_page_content = html.Div(
     [
-        html.H1("Page d'accueil"),
-        html.P("Bienvenue sur la page d'accueil de votre application."),
+        html.H1("Modélisation de la PD bâloise"),
+        html.P("Cécile Huang, Jynaldo Jeannot, Yoan Jsem, Alice Liu"),
     ],
     style=CONTENT_STYLE
 )
@@ -158,6 +173,8 @@ def render_page_content(pathname):
         return html.P("This is the content of page 1.1!")
     elif pathname == "/page-1/2":
         return html.P("This is the content of page 1.2. Yay!")
+    elif pathname == "/page-1/3":
+        return html.P("This is the content of page 1.3. Yay!")
     elif pathname == "/page-2/1":
         return html.P("Oh cool, this is page 2.1!")
     elif pathname == "/page-2/2":
@@ -181,7 +198,6 @@ def redirect_to_home(n_clicks_nexialog, n_clicks_mosef):
         # If no clicks on logos, stay on current page
         return dash.no_update
     
-
 
     
 if __name__ == "__main__":
