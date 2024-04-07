@@ -17,6 +17,7 @@ documentation: https://dash.plot.ly/urls
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, dcc, html
+import pages.page1 as page1
 
 # juste des notes
 
@@ -170,7 +171,7 @@ def render_page_content(pathname):
     if pathname == "/":
         return home_page_content
     if pathname in ["/", "/page-1/1"]:
-        return html.P("This is the content of page 1.1!")
+        return page1.layout
     elif pathname == "/page-1/2":
         return html.P("This is the content of page 1.2. Yay!")
     elif pathname == "/page-1/3":
