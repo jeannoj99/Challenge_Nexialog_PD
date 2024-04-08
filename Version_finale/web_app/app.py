@@ -17,8 +17,8 @@ documentation: https://dash.plot.ly/urls
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, dcc, html
-import page1 
-from page1 import layout as page1_layout, update_images
+import page3 
+from page3 import layout as page3_layout, update_images
 
 # juste des notes
 
@@ -153,7 +153,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE, children=[
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
-page1_content = page1_layout(app)
+page3_content = page3_layout(app)
 
 # this function is used to toggle the is_open property of each Collapse
 def toggle_collapse(n, is_open):
@@ -187,7 +187,7 @@ def render_page_content(pathname):
     if pathname == "/":
         return home_page_content
     if pathname in ["/", "/page-1/1"]:
-        return page1_content
+        return page3_content
     # If the user tries to reach a different page, return a 404 message
     return html.Div(
         [
