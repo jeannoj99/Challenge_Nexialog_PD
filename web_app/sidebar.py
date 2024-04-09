@@ -26,8 +26,7 @@ import pages.page1 as page1
 
 # link fontawesome to get the chevron icons
 app = dash.Dash(
-    external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME] 
-  
+    external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME],suppress_callback_exceptions=True  
 )
 
 
