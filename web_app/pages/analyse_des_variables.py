@@ -1,9 +1,8 @@
 from dash import Dash, html, dcc,Input, Output, callback
 import pandas as pd
 import plotly.express as px
+from utils.callbacks import  binary_risk_stability_graph, binary_volume_stability_graph, binary_summary
 
-data=pd.read_csv("../data/application_train_vf.csv",parse_dates=["date_mensuelle"], index_col=0)
-data["date_annee"]=data["date_mensuelle"].dt.year
 
 layout = html.Div(
     [
@@ -14,7 +13,7 @@ layout = html.Div(
 
         html.Div(
             [
-                html.Label('Stability over Time'),
+                html.Label('Binary Variables'),
                 dcc.Dropdown(
                     options=[
                         {'label': 'FLAG_MOBIL', 'value': 'FLAG_MOBIL'},
@@ -22,79 +21,45 @@ layout = html.Div(
                         {'label': 'FLAG_WORK_PHONE', 'value': 'FLAG_WORK_PHONE'},
                         {'label': 'FLAG_EMAIL', 'value': 'FLAG_EMAIL'}
                     ],
-                    value='FLAG_WORK_PHONE',id='col_for_risk_stab'
+                    value='FLAG_WORK_PHONE', id='binary_col'
                 ),
 
                 html.Br(),
-
-                dcc.Graph(id='graph_risk_stab_time'),
-
-                html.Br(),
-                html.Label('Multi-Select Dropdown'),
-                dcc.Dropdown(
-                    options=[
-                        {'label': 'New York City', 'value': 'NYC'},
-                        {'label': 'Montréal', 'value': 'MTL'},
-                        {'label': 'San Francisco', 'value': 'SF'}
-                    ],
-                    value=['MTL', 'SF'],
-                    multi=True
-                ),
-
-                html.Br(),
-
-                html.Label('Radio Items'),
-                dcc.RadioItems(
-                    options=[
-                        {'label': 'New York City', 'value': 'NYC'},
-                        {'label': 'Montréal', 'value': 'MTL'},
-                        {'label': 'San Francisco', 'value': 'SF'}
-                    ],
-                    value='MTL'
-                ),
             ],
-            style={'padding': 10, 'flex': 1}
+            style={'padding': '1%'}
         ),
 
         html.Div(
             [
-                html.Label('Checkboxes'),
-                dcc.Checklist(
-                    options=[
-                        {'label': 'New York City', 'value': 'NYC'},
-                        {'label': 'Montréal', 'value': 'MTL'},
-                        {'label': 'San Francisco', 'value': 'SF'}
+                html.Div(
+                    [
+                        dcc.Graph(id='graph_risk_stability_overtime'),
                     ],
-                    value=['MTL', 'SF']
+                    style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
                 ),
-
-                html.Br(),
-
-                html.Label('Text Input'),
-                dcc.Input(value='MTL', type='text'),
-
-                html.Br(),
-
-                html.Label('Slider'),
-                dcc.Slider(
-                    min=0,
-                    max=9,
-                    marks={i: f'Label {i}' if i == 1 else str(i) for i in range(1, 6)},
-                    value=5,
+                html.Div(
+                    [
+                        dcc.Graph(id='graph_volume_stability_overtime'),
+                    ],
+                    style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
                 ),
+                html.Div(
+                    [
+                        html.Div(
+                            [
+                                html.H2("Informations supplémentaires"),
+                                html.P(id='binary_info'),
+                            ],
+                            style={'padding': '1%', 'backgroundColor': '#00ffff', 'border': '2px solid #000', 'borderRadius': '10px', 'width': '20vw'}  # Utilisez 40% de la largeur de la fenêtre
+                        )
+                    ],
+                    style={'flex': '1', 'width': '30vw'}  # Utilisez 40% de la largeur de la fenêtre
+                )
             ],
-            style={'padding': 10, 'flex': 1}
+            style={'display': 'flex', 'flexDirection': 'row', 'width': '100%'}  # Utilisez 100% de la largeur de la fenêtre
         )
     ],
-    style={'display': 'flex', 'flexDirection': 'column'}
+    style={'display': 'flex', 'flexDirection': 'column'}  
 )
 
-@callback(
-        Output('graph_risk_stab_time','figure'),
-        Input('col_for_risk_stab','value'))
-def show_risk_stability_overtime(colname:str):
-    print(colname)
-    result = data.groupby([colname, "date_annee"])['TARGET'].value_counts(normalize=True).unstack().fillna(0)[1]
-    fig = px.line(result, x=result.index.get_level_values("date_annee"),
-                   y=result.values, color=result.index.get_level_values(f"{colname}"),markers=True)
-    return fig
+
