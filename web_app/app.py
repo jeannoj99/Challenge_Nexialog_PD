@@ -17,8 +17,9 @@ documentation: https://dash.plot.ly/urls
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, dcc, html
-import pages.page1 as page1
-
+import pages.analyse_des_variables as analyse_des_variables
+import pages.modelisation as modelisation
+import pages.quantification as quantification
 # juste des notes
 
 #BS = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
@@ -72,9 +73,9 @@ submenu_1 = [
     # we use the Collapse component to hide and reveal the navigation links
     dbc.Collapse(
         [
-            dbc.NavLink("Analyse des variables", href="/page-1/1"),
-            dbc.NavLink("Modèle et grille de score", href="/page-1/2"),
-            dbc.NavLink("Quantification des résultats", href="/page-1/3"),
+            dbc.NavLink("Analyse des variables", href="/analyse-des-variables"),
+            dbc.NavLink("Modélisation", href="/modelisation"),
+            dbc.NavLink("Quantification des résultats", href="/quantification"),
         ],
         id="submenu-1-collapse",
     ),
@@ -169,12 +170,12 @@ for i in [1, 2]:
 def render_page_content(pathname):
     if pathname == "/":
         return home_page_content
-    if pathname in ["/", "/page-1/1"]:
-        return page1.layout
-    elif pathname == "/page-1/2":
-        return html.P("This is the content of page 1.2. Yay!")
-    elif pathname == "/page-1/3":
-        return html.P("This is the content of page 1.3. Yay!")
+    if pathname in ["/", "/analyse-des-variables"]:
+        return analyse_des_variables.layout
+    elif pathname == "/modelisation":
+        return modelisation.layout
+    elif pathname == "/quantification":
+        return quantification.layout
     elif pathname == "/page-2/1":
         return html.P("Oh cool, this is page 2.1!")
     elif pathname == "/page-2/2":
