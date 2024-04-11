@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
+import plotly.figure_factory as ff
 
 # layout = html.P("zae!")
 
@@ -11,8 +12,8 @@ data["date_annee"]=data["date_mensuelle"].dt.year
 
 grid_score = pd.read_excel("../data/grille_de_score.xlsx",index_col=0)
 
-data_test = pd.read_csv("../../data/data_test_all.csv",sep=',')
-data_test = pd.read_csv("../../data/data_test_all.csv",sep=',')
+data_train = pd.read_csv("../data/data_train_all.csv",sep=',')
+data_test = pd.read_csv("../data/data_test_all.csv",sep=',')
 
 logit_results = [
     ["OCCUPATION_TYPE", "Treatment(reference=0)[0]", -0.9269, 0.059, -15.723, 0.000, "-1.042, -0.811"],
@@ -92,6 +93,24 @@ layout = html.Div(
             html.H3(children='Répartition des notes en fonction de la target', style={'textAlign': 'center'}),
             style={'margin-bottom': '20px'}
         ),
+
+        html.Div(
+            [
+                html.Label('Set de données'),
+                dcc.Dropdown(
+                    options=[
+                        {'label': 'data_train', 'value': 'data_train'},
+                        {'label': 'data_test', 'value': 'data_test'},
+                        
+                    ],
+                    value='data_train',id='dropdown-repartition'
+                ),
+
+            ],
+            style={'padding': 10, 'flex': 1}
+        ),
+      
+      dcc.Graph(id='repartition-target'),
 
     ],
     style={'display': 'flex', 'flexDirection': 'column'}
@@ -189,3 +208,40 @@ def update_score_grid_graph(selected_variable):
         return fig.to_dict()
     else:
         return {}
+
+
+@callback(
+    Output('repartition-target', 'figure'),
+    [Input('dropdown-repartition', 'value')]
+)
+
+def update_repartition(selected_data):
+    if selected_data == 'data_train':
+   
+        # Création du displot avec ff.displot
+        fig = ff.create_distplot(
+            [data_train['Note'][data_train['TARGET'] == 0], 
+             data_train['Note'][data_train['TARGET'] == 1]],
+            group_labels=['Target = 0', 'Target = 1'],
+            colors=['blue', 'red'], 
+            show_hist=False
+        )
+
+        # Mise en forme du titre et des axes
+        fig.update_layout(
+            title='Distribution de la cible en fonction de la Note',
+            xaxis_title='Note',
+            yaxis_title='Fréquence'
+        )
+
+        # Créer le composant graphique de Dash
+        graph = dcc.Graph(
+            id='distplot',
+            figure=fig
+        )
+
+        # Retourner le composant graphique de Dash
+        return fig
+    else:
+        # Si les données sélectionnées ne sont pas 'data_train', renvoyer une division HTML vide
+        return html.Div()
