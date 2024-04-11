@@ -5,15 +5,24 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import plotly.figure_factory as ff
 
-# layout = html.P("zae!")
-
-data=pd.read_csv("../data/application_train_vf.csv",parse_dates=["date_mensuelle"], index_col=0)
-data["date_annee"]=data["date_mensuelle"].dt.year
 
 grid_score = pd.read_excel("../data/grille_de_score.xlsx",index_col=0)
+grid_score = grid_score.sort_values(by=['Variable', 'tx_defaut'], ascending=[True, False])
+
+grid_score_cash = pd.read_excel("../data/grille_de_score_cash.xlsx",index_col=0)
+grid_score_cash = grid_score_cash.sort_values(by=['Variable', 'tx_defaut'], ascending=[True, False])
+
+grid_score_revolving = pd.read_excel("../data/grille_de_score_revolving.xlsx",index_col=0)
+grid_score_revolving = grid_score_revolving.sort_values(by=['Variable', 'tx_defaut'], ascending=[True, False])
 
 data_train = pd.read_csv("../data/data_train_all.csv",sep=',')
 data_test = pd.read_csv("../data/data_test_all.csv",sep=',')
+
+data_train_cash = pd.read_csv("../data/data_train_notes_target_cash.csv",sep=',')
+data_test_cash = pd.read_csv("../data/data_test_notes_target_cash.csv",sep=',')
+
+data_train_revolving = pd.read_csv("../data/data_train_notes_target_revolving.csv",sep=',')
+data_test_revolving = pd.read_csv("../data/data_test_notes_target_revolving.csv",sep=',')
 
 logit_results = [
     ["OCCUPATION_TYPE", "Treatment(reference=0)[0]", -0.9269, 0.059, -15.723, 0.000, "-1.042, -0.811"],
@@ -51,18 +60,18 @@ layout = html.Div(
                 html.Label('Choix du modèle'),
                 dcc.Dropdown(
                     options=[
-                        {'label': 'Loans', 'value': 'FLAG_MOBIL'},
-                        {'label': 'Revolving', 'value': 'FLAG_EMP_PHONE'},
-                        {'label': 'Les deux', 'value': 'Les deux'},
+                        {'label': 'Cash Loans', 'value': 'Cash Loans'},
+                        {'label': 'Revolving Loans', 'value': 'Revolving Loans'},
+                        {'label': 'All contracts', 'value': 'All contracts'},
                     ],
-                    value='Loans',id='dropdown-logit'
+                    value='Cash Loans',id='main-dropdown'
                 ),
 
             ],
             style={'padding': 10, 'flex': 1}
         ),
       
-      html.Div(id='logit-results'),
+      html.Div(id='logit-results', style={'maxHeight': '300px', 'overflowY': 'auto'}),
 
       html.Div(
             html.H3(children='Grille de score', style={'textAlign': 'center'}),
@@ -75,19 +84,14 @@ layout = html.Div(
             [
                 html.Label('Choix de la variable'),
                 dcc.Dropdown(
-                    options=[
-                        {'label': 'AMT_CREDIT_NORM', 'value': 'AMT_CREDIT_NORM'},
-                        {'label': 'BORROWER_AGE', 'value': 'BORROWER_AGE'},
-                        {'label': 'BORROWER_SENIORITY', 'value': 'BORROWER_SENIORITY'},
-                    ],
-                    value='AMT_CREDIT_NORM',id='dropdown-grid-score'
+                    id='dropdown-grid-score'
                 ),
 
             ],
             style={'padding': 10, 'flex': 1}
         ),
 
-        dcc.Graph(id='effectif-modalites'),
+        dcc.Graph(id='effectif-modalites', style={'height': '800px'}),
 
         html.Div(
             html.H3(children='Répartition des notes en fonction de la target', style={'textAlign': 'center'}),
@@ -116,13 +120,59 @@ layout = html.Div(
     style={'display': 'flex', 'flexDirection': 'column'}
 )
 
-# Callback pour mettre à jour l'affichage du DataFrame en fonction de la sélection du dropdown
+
+###########################################################################################################
+########################################## CALLBACKS ######################################################
+###########################################################################################################
+
+# choix du modèle et affiche les bonnes variables pour la grille de score selon modèle
+@callback(
+    Output('dropdown-grid-score', 'options'),
+    [Input('main-dropdown', 'value')]
+)
+def update_grid_score_options(selected_model):
+    if selected_model == 'All contracts':
+        return [
+            {'label': 'AMT_CREDIT_NORM', 'value': 'AMT_CREDIT_NORM'},
+            {'label': 'BORROWER_AGE', 'value': 'BORROWER_AGE'},
+            {'label': 'BORROWER_SENIORITY', 'value': 'BORROWER_SENIORITY'},
+            {'label': 'CB_DAYS_CREDIT', 'value': 'CB_DAYS_CREDIT'},
+            {'label': 'CB_NB_CREDIT_CLOSED', 'value': 'CB_NB_CREDIT_CLOSED'},
+            {'label': 'NAME_EDUCATION_TYPE', 'value': 'NAME_EDUCATION_TYPE'},
+            {'label': 'OCCUPATION_TYPE', 'value': 'OCCUPATION_TYPE'},   
+        ]
+    elif selected_model == "Cash Loans":
+        return [
+            {'label': 'AMT_CREDIT_NORM', 'value': 'AMT_CREDIT_NORM'},
+            {'label': 'BORROWER_AGE', 'value': 'BORROWER_AGE'},
+            {'label': 'BORROWER_SENIORITY', 'value': 'BORROWER_SENIORITY'},
+            {'label': 'CB_DAYS_CREDIT', 'value': 'CB_DAYS_CREDIT'},
+            {'label': 'CB_NB_CREDIT_CLOSED', 'value': 'CB_NB_CREDIT_CLOSED'},
+            {'label': 'NAME_EDUCATION_TYPE', 'value': 'NAME_EDUCATION_TYPE'},
+            {'label': 'OCCUPATION_TYPE', 'value': 'OCCUPATION_TYPE'},   
+        ]
+    elif selected_model == "Revolving Loans":
+        return [
+            {'label': 'AMT_GOODS_PRICE', 'value': 'AMT_GOODS_PRICE'},
+            {'label': 'BORROWER_SENIORITY', 'value': 'BORROWER_SENIORITY'},
+            {'label': 'CB_DAYS_CREDIT', 'value': 'CB_DAYS_CREDIT'},
+            {'label': 'CB_NB_CREDIT_CLOSED', 'value': 'CB_NB_CREDIT_CLOSED'},
+            {'label': 'DAYS_LAST_PHONE_CHANGE', 'value': 'DAYS_LAST_PHONE_CHANGE'},
+            {'label': 'NAME_EDUCATION_TYPE', 'value': 'NAME_EDUCATION_TYPE'},
+            {'label': 'OCCUPATION_TYPE', 'value': 'OCCUPATION_TYPE'},   
+        ]
+    else:
+        return []
+
+
+
+# résultats du logit en fonction du modèle choisi
 @callback(
     Output('logit-results', 'children'),
-    [Input('dropdown-logit', 'value')]
+    [Input('main-dropdown', 'value')]
 )
 def update_results(selected_model):
-    if selected_model == 'Les deux':
+    if selected_model == 'All contracts':
         # Afficher df_logit_results
         return html.Table(
             [
@@ -134,46 +184,40 @@ def update_results(selected_model):
                      range(len(df_logit_results))]
                 )
             ],
-            className='table table-sm' # table pour CSS et table-sm pour small
+            className='table table-sm overflow-auto' # table pour CSS et table-sm pour small
         )
     else:
         return html.Div()
 
 
+# Grille de score en fonction de la variable sélectionnée
 @callback(
     Output('effectif-modalites', 'figure'),
-    [Input('dropdown-grid-score', 'value')]
+    [Input('dropdown-grid-score', 'value'),
+     Input('main-dropdown', 'value')]
 )
-def update_score_grid_graph(selected_variable):
-    if selected_variable == "AMT_CREDIT_NORM":
+
+def update_score_grid_graph(selected_variable, selected_model):
+    # if selected_variable == "AMT_CREDIT_NORM" and selected_model == "All contracts":
+    if selected_model == "All contracts": 
         # Filtrer les données de la grille de score pour la variable sélectionnée
-        variable_data = grid_score[grid_score["Variable"] == "AMT_CREDIT_NORM"]
+        variable_data = grid_score[grid_score["Variable"] == selected_variable]
 
-
-        # Créer le premier histogramme pour les effectifs
-        # fig1 = px.bar(variable_data, 
-        #               x="Modalités", 
-        #               y='effectif'
-        #               )
-        
+        # effectif/modalités
         fig1 = px.pie(variable_data, 
                       names="Modalités", 
-                      values='effectif'
+                      values='effectif',
+                      height=800
                       )
-        #fig.add_trace(fig1,row=1,col=1)
-        # fig1.update_layout(title='Effectif/Modalités', xaxis_title="Modalités", template='plotly_dark')  # Utilisation du template 'plotly_dark'
-        # fig1.update_xaxes(title_text='Modalités', categoryorder='total ascending', showgrid=False)  # Désactivation de la grille
-        # fig1.update_yaxes(title_text='Effectif', showgrid=False)  # Désactivation de la grille
 
-        # Créer le deuxième histogramme horizontal pour les notes
-        fig2 = px.bar(variable_data, y="Modalités", x='Note', orientation='h')
+        # notes/modalités
+        fig2 = px.bar(variable_data, y="Modalités", x='Note', orientation='h', text_auto=True)
 
-        # fig2.update_layout(title='Modalités/Notes', template='plotly_dark')  # Utilisation du template 'plotly_dark'
-        # fig2.update_yaxes(title_text='Modalités', categoryorder='total ascending', showgrid=False)  # Désactivation de la grille
-        # fig2.update_xaxes(title_text='Notes', showgrid=False)  # Désactivation de la grille
+        # taux de défaut/modalités
+        fig3 = px.line(variable_data, x="Modalités",y="tx_defaut", markers=True, text="tx_defaut")
+        fig3.update_traces(textposition="top right")
 
-        fig3 = px.line(variable_data, x="Modalités",y="tx_defaut")
-
+        # tableau
         fig4 =  go.Table(
         header=dict(
             values=["Modalités","Coefficient","p-value"],
@@ -181,7 +225,7 @@ def update_score_grid_graph(selected_variable):
             align="left"
         ),
         cells=dict(
-            values=[variable_data[k].tolist() for k in variable_data.columns[1:4]],
+            values=[variable_data[k].tolist() for k in variable_data.columns[[1,2,4]]],
             align = "left")
     )
 
@@ -201,6 +245,16 @@ def update_score_grid_graph(selected_variable):
             fig.add_trace(trace, row=2, col=1)
         #for trace in fig4:
         fig.add_trace(fig4, row=2, col=2)
+
+        # Update xaxis properties
+        fig.update_xaxes(title_text="Notes", row=1, col=2)
+        fig.update_xaxes(title_text="Modalités", row=2, col=1)
+
+        # Update yaxis properties
+        fig.update_yaxes(title_text="Modalités", row=1, col=2)
+        fig.update_yaxes(title_text="Taux de défaut", row=2, col=1)
+    
+
         
         # Mettre à jour la disposition de la figure
         fig.update_layout(title_text='Title')
@@ -224,7 +278,8 @@ def update_repartition(selected_data):
              data_train['Note'][data_train['TARGET'] == 1]],
             group_labels=['Target = 0', 'Target = 1'],
             colors=['blue', 'red'], 
-            show_hist=False
+            show_hist=False,
+            show_rug=False
         )
 
         # Mise en forme du titre et des axes
@@ -232,12 +287,6 @@ def update_repartition(selected_data):
             title='Distribution de la cible en fonction de la Note',
             xaxis_title='Note',
             yaxis_title='Fréquence'
-        )
-
-        # Créer le composant graphique de Dash
-        graph = dcc.Graph(
-            id='distplot',
-            figure=fig
         )
 
         # Retourner le composant graphique de Dash
