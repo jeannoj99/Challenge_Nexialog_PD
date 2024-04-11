@@ -13,12 +13,12 @@ app = dash.Dash(__name__)
 
 # Liste des champs pour l'interface utilisateur
 fields = ["NAME_CONTRACT_TYPE","OCCUPATION_TYPE", "NAME_EDUCATION_TYPE" , "CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT", "AMT_CREDIT",
-          "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION"]
+          "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","DAYS_LAST_PHONE_CHANGE"]
 
 # Liste des variables catégorielles et numériques
 categorical_vars = ["NAME_CONTRACT_TYPE", "OCCUPATION_TYPE", "NAME_EDUCATION_TYPE"]
 numeric_vars = ["CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT", "AMT_CREDIT",
-                "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION"]
+                "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","DAYS_LAST_PHONE_CHANGE"]
 
 # Fonction pour créer un dropdown pour les variables catégorielles
 def create_categorical_dropdown(id, label):
@@ -42,49 +42,50 @@ app.layout = html.Div(
     children=[
         html.Div(
             dmc.Title(children='CREDIT RISK PLATFORM', order=3, style={'font-family': 'IntegralCF-ExtraBold', 'text-align': 'center', 'color': 'slategray'}),
-            style={'margin': '20px auto'}  # Marges sur les côtés et centrage horizontal
+            style={'margin': '20px auto'}
         ),
-        html.Div(
-            dmc.SimpleGrid( 
-                cols=4, 
-                children=[
-                    html.Div([create_categorical_dropdown(f"dropdown-{field}", field) if field in categorical_vars else create_numeric_input(f"input-{field}", field) for field in fields[0:3]], className='row'),
-                    html.Div([create_categorical_dropdown(f"dropdown-{field}", field) if field in categorical_vars else create_numeric_input(f"input-{field}", field) for field in fields[3:6]], className='row'),
-                    html.Div([create_categorical_dropdown(f"dropdown-{field}", field) if field in categorical_vars else create_numeric_input(f"input-{field}", field) for field in fields[6:9]], className='row'),
-                    html.Div([create_categorical_dropdown(f"dropdown-{field}", field) if field in categorical_vars else create_numeric_input(f"input-{field}", field) for field in fields[9:12]], className='row')
-                ],
-                id='fields-container',
-                style={'margin': '0 auto 20px'}  # Marge en bas et centrage horizontal
-            )
+        dmc.SimpleGrid(
+            cols=4,
+            children=[
+                create_categorical_dropdown("dropdown-NAME_CONTRACT_TYPE", "NAME_CONTRACT_TYPE"),
+                create_categorical_dropdown("dropdown-OCCUPATION_TYPE", "OCCUPATION_TYPE"),
+                create_categorical_dropdown("dropdown-NAME_EDUCATION_TYPE", "NAME_EDUCATION_TYPE"),
+                create_numeric_input("input-CB_NB_CREDIT_CLOSED", "CB_NB_CREDIT_CLOSED"),
+                create_numeric_input("input-CB_DAYS_CREDIT", "CB_DAYS_CREDIT"),
+                create_numeric_input("input-AMT_CREDIT", "AMT_CREDIT"),
+                create_numeric_input("input-CB_AMT_CREDIT_SUM", "CB_AMT_CREDIT_SUM"),
+                create_numeric_input("input-AMT_INCOME_TOTAL", "AMT_INCOME_TOTAL"),
+                create_numeric_input("input-AMT_GOODS_PRICE", "AMT_GOODS_PRICE"),
+                create_numeric_input("input-DAYS_BIRTH", "DAYS_BIRTH"),
+                create_numeric_input("input-DAYS_EMPLOYED", "DAYS_EMPLOYED"),
+                create_numeric_input("input-DAYS_REGISTRATION", "DAYS_REGISTRATION"),
+                create_numeric_input("input-DAYS_LAST_PHONE_CHANGE", "DAYS_LAST_PHONE_CHANGE")
+            ],
+            id='fields-container',
+            style={'margin': '0 auto 20px'}
         ),
         html.Div(
             html.Button('Submit request', id='submit-button', n_clicks=0, style={'background-color': 'blue', 'padding': '10px 20px', 'font-size': '16px'}),
-            style={'text-align': 'center', 'margin': '0 auto 20px'}  # Centrage horizontal et marge en bas
+            style={'text-align': 'center', 'margin': '0 auto 20px'}
         ),
-        html.Div([
-    dmc.Container(
-        [
-            # Zone de texte pour la décision, stylisée et centrée dans un Paper
+        dmc.Container(
             dmc.Paper(
-                html.Div("Votre décision de crédit s'affichera ici", id="decision", style={'textAlign': 'center', 'padding': '20px'}),
+                html.Div("Credit decision will be displayed here", id="decision", style={'textAlign': 'center', 'padding': '20px'}),
                 withBorder=True,
                 radius="md",
                 shadow="xs",
                 p="md",
                 style={'maxWidth': '600px', 'margin': '40px auto', 'backgroundColor': '#f0f0f0'}
             ),
-            # Ajoutez ici d'autres composants de votre application...
-        ],
-        style={'padding': '20px'}
-    )
-], style={'fontFamily': 'Arial, sans-serif', 'backgroundColor': '#eaeaea'}),
+            style={'padding': '20px'}
+        ),
         html.Div(
             dmc.Progress(id='probability', value=55, className='progressbar', color='green', label='55%', size='xl'),
-            style={'margin': '0 auto 20px'}  # Marge en bas et centrage horizontal
+            style={'margin': '0 auto 20px'}
         ),
-        html.Div(id='output-container')  # Placeholder pour afficher les résultats de la soumission
+        html.Div(id='output-container')
     ],
-    style={'max-width': '800px', 'margin': 'auto'}  # Centrage horizontal
+    style={'max-width': '800px', 'margin': 'auto'}
 )
 
 
@@ -105,7 +106,7 @@ app.layout = html.Div(
         Output('input-DAYS_BIRTH', 'value'),
         Output('input-DAYS_EMPLOYED', 'value'),
         Output('input-DAYS_REGISTRATION', 'value'),
-        
+        Output('input-DAYS_LAST_PHONE_CHANGE', 'value'),
         Input('submit-button', 'n_clicks'),
         
         State('dropdown-NAME_CONTRACT_TYPE', 'value'),
@@ -120,6 +121,7 @@ app.layout = html.Div(
         State('input-DAYS_BIRTH', 'value'),
         State('input-DAYS_EMPLOYED', 'value'),
         State('input-DAYS_REGISTRATION', 'value'),
+        State('input-DAYS_LAST_PHONE_CHANGE', 'value'),
         prevent_initial_call=True
 )
 def update_output(n_clicks, *values):

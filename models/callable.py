@@ -152,6 +152,7 @@ class DecisionExpertSystem :
     
     def get_decision(self):
         segment = self.get_chr()
+        
         if segment in [5,6]:
             return "Approval","green"
         elif segment in [2,3,4]:
