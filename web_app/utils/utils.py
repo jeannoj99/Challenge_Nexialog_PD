@@ -2,7 +2,8 @@
 
 import plotly.graph_objects as go
 import pandas as pd
-
+from scipy.stats import mannwhitneyu ,chi2_contingency
+import numpy as np
 
 def show_risk_stability_graph(data: pd.DataFrame, colname):
     result = data.groupby([colname, "date_annee"])['TARGET'].value_counts(normalize=True).unstack().fillna(0)[1]
@@ -46,3 +47,50 @@ def convert_numeric_to_category(df: pd.DataFrame):
             pass
         else:
             pass
+
+def cramers_v(data,col):
+    contingency_table=pd.crosstab(data["TARGET"], data[col])
+    chi2 = chi2_contingency(contingency_table)[0]
+    n = contingency_table.sum().sum()
+    phi2 = chi2 / n
+    r, k = contingency_table.shape
+    phi2corr = max(0, phi2 - ((k-1)*(r-1))/(n-1))
+    rcorr = r - ((r-1)**2)/(n-1)
+    kcorr = k - ((k-1)**2)/(n-1)
+    return f"cramers V: {round(np.sqrt(phi2corr / min((kcorr-1), (rcorr-1))),3)}"
+
+
+def mannwhitney_test(df: pd.DataFrame, variable: str):
+    if df[variable].dtype not in ['int64', 'float64']: 
+        return f"{variable} n'est pas numérique"
+
+    group_1 = df[df["TARGET"] == 0]
+    group_2 = df[df["TARGET"] == 1]
+
+    stat, p_value = mannwhitneyu(group_1[variable].dropna(), group_2[variable].dropna())
+    return f"Pour {variable}, Mann-Whitney U-Statistic: {round(stat, 3)} (p-value: {round(p_value, 3)})"
+
+
+def calculate_information_value(data,col):
+    contingency_table=pd.crosstab(data["TARGET"], data[col])
+    """_summary_
+
+    Args:
+        contingency_table (pd.DataFrame): Tableau croisée dynamique du prédicteur catégoriel et de la target
+
+    Returns:
+        float: _description_
+    """
+    non_event_rate=contingency_table.iloc[0]/(contingency_table.iloc[0].sum())
+    event_rate=contingency_table.iloc[1]/(contingency_table.iloc[1].sum())
+    iv=0
+    if (non_event_rate.min() > 0) & (event_rate.mean() >0) :
+        for col in non_event_rate.index:
+            iv += (event_rate[col] - non_event_rate[col])*np.log(event_rate[col] / non_event_rate[col])
+
+    return f"Information value: {round(iv,4)}"
+
+def calculate_chi_stat(data,col):
+    contingency_table=pd.crosstab(data["TARGET"], data[col])
+    chi2, p, _, _ = chi2_contingency(contingency_table, correction=True)     
+    return f"Chi-squared: {round(chi2,2)} (p-value: {round(p,3)})"
