@@ -95,14 +95,37 @@ df_logit_results = pd.DataFrame(logit_results, columns=["Variable", "Modalités"
 df_logit_results_cash = pd.DataFrame(logit_results_cash, columns=["Variable", "Modalités", "Coefficient", "std err", "z", "P>|z|", "[0.025, 0.975]"])
 df_logit_results_revo = pd.DataFrame(logit_results_revolving, columns=["Variable", "Modalités", "Coefficient", "std err", "z", "P>|z|", "[0.025, 0.975]"])
 
+# border_color = "#8C8C8C"
+
+# style = {
+#     "height": 100,
+#     "border": f"1px solid {border_color}",
+#     "marginTop": 20,
+#     "marginBottom": 20,
+#     "borderRadius": 10,  # Arrondir les bordures
+#     "backgroundColor": "white",  # Fond blanc
+# }
 
 layout = html.Div(
     [
         # Première partie
-        html.Div(
-            [
 
-                html.H1(children='All Contracts Model', style={'textAlign': 'center'}),
+#         html.Div(
+#     children=[
+#         dmc.Container("Default container", style=style),
+#         dmc.Container(
+#             "xs container with xs horizontal padding", size="xs", px="xs", style=style
+#         ),
+#         dmc.Container(
+#             "200px container with 0px horizontal padding", size=200, px=0, style=style
+#         ),
+#     ]
+# )
+        html.Div(
+            [   
+                dmc.Title(f"All Contracts Model", order=1, style={'textAlign': 'center'}), 
+
+                html.Br(),
 
                 dmc.Text("Modèle par défaut", weight=600),
 
@@ -116,7 +139,8 @@ layout = html.Div(
 
                 html.Br(),
 
-                html.H3(children='Grille de score', style={'textAlign': 'center'}),
+                # html.H3(children='Grille de score', style={'textAlign': 'center'}),
+                dmc.Title(f"Grille de score", order=3, style={'textAlign': 'center'}),
 
                 html.Label('Choix de la variable'),
 
@@ -126,11 +150,15 @@ layout = html.Div(
 
                 dcc.Graph(id='effectif-modalites-all', style={'height': '800px'}),
 
+                html.Br(),
+
                 dmc.Switch(id="switch-example-all", label="Afficher la grille de score", checked=False, onLabel="ON", offLabel="OFF"),
                 dmc.Space(h=30),
                 dmc.Text(id="switch-settings-all"),
 
-                html.H3(children='Répartition des notes en fonction de la target', style={'textAlign': 'center'}),
+                # html.H3(children='Répartition des notes en fonction de la target', style={'textAlign': 'center'}),
+                dmc.Title(f"Répartition des notes en fonction de la target", order=3, style={'textAlign': 'center'}),
+
                 html.Label('Set de données'),
 
                 dcc.Dropdown(
@@ -146,14 +174,16 @@ layout = html.Div(
             
             ],
             style={'flex': '1', 'margin-right': '10px'}  # Utilisation de flexbox pour la mise en page
-        ),
+        )
+        ,
 
         # Deuxième partie
         html.Div(
             [
 
-                html.H1(children='Cash Loans/Revolving Loans', style={'textAlign': 'center'}),
-                html.Label('Choix du modèle à comparer'),
+                dmc.Title(f"Cash Loans/Revolving Loans", order=1, style={'textAlign': 'center'}),
+                html.Br(),
+                dmc.Text('Choix du modèle à comparer', weight=600),
                 dcc.Dropdown(
                     options=[
                         {'label': 'Cash Loans', 'value': 'Cash Loans'},
@@ -170,7 +200,7 @@ layout = html.Div(
 
                 html.Br(),
 
-                html.H3(children='Grille de score', style={'textAlign': 'center'}),
+                dmc.Title(f"Grille de score", order=3, style={'textAlign': 'center'}),
 
                 html.Label('Choix de la variable'),
 
@@ -180,11 +210,13 @@ layout = html.Div(
 
                 dcc.Graph(id='effectif-modalites', style={'height': '800px'}),
 
+                html.Br(),
+
                 dmc.Switch(id="switch-example", label="Afficher la grille de score", checked=False, onLabel="ON", offLabel="OFF"),
                 dmc.Space(h=30),
                 dmc.Text(id="switch-settings"),
 
-                html.H3(children='Répartition des notes en fonction de la target', style={'textAlign': 'center'}),
+                dmc.Title(f"Répartition des notes en fonction de la target", order=3, style={'textAlign': 'center'}),
                 html.Label('Set de données'),
 
                 dcc.Dropdown(
@@ -316,9 +348,12 @@ def update_score_grid_graph(selected_variable):
     
 
     # Mettre à jour la disposition de la figure
-    fig.update_layout(title_text='Dashboard pour la grille de score', template='seaborn' , 
-                      margin=dict(l=0, r=0, t=100, b=100),
-                      legend=dict(orientation='h', x=0, y=0.5)
+    fig.update_layout(
+        title_text='Dashboard', 
+        title_x=0.5,
+        template='simple_white' , 
+                      margin=dict(l=0, r=0, t=100, b=100), # agrandir les marges
+                      legend=dict(orientation='h', x=0, y=0.5)  # placer la légende
                           )
 
     return fig.to_dict()
@@ -353,7 +388,8 @@ def update_repartition(selected_data):
     fig.update_layout(
          title=f'Distribution de TARGET en fonction de la Note sur {selected_data} pour "All Contracts"',
          xaxis_title='Note',
-         yaxis_title='Fréquence'
+         yaxis_title='Fréquence',
+         template="simple_white"
      )
 
     return fig
@@ -506,7 +542,8 @@ def update_score_grid_graph(selected_variable, selected_model):
     
 
     # Mettre à jour la disposition de la figure
-    fig.update_layout(title_text='Dashboard pour la grille de score', template='seaborn' , 
+    fig.update_layout(title_text='Dashboard', 
+        title_x=0.5, template='simple_white' , 
                       margin=dict(l=0, r=0, t=100, b=100),
                       legend=dict(orientation='h', x=0, y=0.5)
                           )
@@ -547,7 +584,8 @@ def update_repartition(selected_data,selected_model):
     fig.update_layout(
          title=f'Distribution de TARGET en fonction de la Note sur {selected_data} pour {selected_model}',
          xaxis_title='Note',
-         yaxis_title='Fréquence'
+         yaxis_title='Fréquence',
+         template = "simple_white"
      )
 
     return fig
