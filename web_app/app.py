@@ -104,7 +104,7 @@ submenu_2 = [
     ),
     dbc.Collapse(
         [
-            dbc.NavLink("Page 2.1", href="/page-2/1"),
+            dbc.NavLink("Plateforme Risque de crédit", href="/octroi"),
             dbc.NavLink("Page 2.2", href="/page-2/2"),
         ],
         id="submenu-2-collapse",

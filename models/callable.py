@@ -18,23 +18,23 @@ required_columns={
               "AMT_GOODS_PRICE","DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION" ]
 }
 
-cash_grid_score=pd.read_excel("data/grille_de_score.xlsx", index_col=0)
+cash_grid_score=pd.read_excel("data/grille_de_score_cash.xlsx", index_col=0)
 revolving_grid_score = pd.read_excel("data/grille_de_score_revolving.xlsx", index_col=0)
 
 discretizers={}
 
-with open("utils/Revolving/discretizers.pkl", "rb") as f:
+with open("web_app/utils/Revolving/discretizers.pkl", "rb") as f:
     discretizers["Revolving loans"]=pickle.load(f)
 
-with open("utils/Cash/discretizers.pkl", "rb") as f:
+with open("web_app/utils/Cash/discretizers.pkl", "rb") as f:
     discretizers["Cash loans"]=pickle.load(f)
 
 breaks = {}
 
-with open("utils/Cash/breaks.pkl", "rb") as f:
+with open("web_app/utils/Cash/breaks.pkl", "rb") as f:
     breaks["Cash loans"]=pickle.load(f)
 
-with open("utils/Revolving/breaks.pkl", "rb") as f:
+with open("web_app/utils/Revolving/breaks.pkl", "rb") as f:
     breaks["Revolving loans"]=pickle.load(f)
 
 class DecisionExpertSystem :
@@ -152,24 +152,21 @@ class DecisionExpertSystem :
     
     def get_decision(self):
         segment = self.get_chr()
-        
-        if segment in [5,6]:
-            return "Approval","green"
-        elif segment in [2,3,4]:
-            return "Referal to Analyst","yellow"
+        # automatic refusal rules
+        if self.data["DAYS_BIRTH"].apply(np.abs).values[0]//365 < 18:
+            return "Refusal", "red"
         elif segment in [0,1]:
             return "Refusal","red"
+        # referal to analyst à enrichir
+        elif segment in [2,3,4]:
+            return "Referal to Analyst","yellow"
+        elif segment in [5,6]:
+            return "Approval","green"
+        
         else :
             return None
     
 
     
-# test={'NAME_CONTRACT_TYPE': 'Cash loans', 'OCCUPATION_TYPE': 'Drivers', 'NAME_EDUCATION_TYPE': 'Secondary / secondary special', 'CB_NB_CREDIT_CLOSED': 0, 'CB_DAYS_CREDIT': 0, 'AMT_CREDIT': 0, 'CB_AMT_CREDIT_SUM': 0, 'AMT_INCOME_TOTAL': 0, 'AMT_GOODS_PRICE': 0, 'DAYS_BIRTH': 365*35, 'DAYS_EMPLOYED': 0, 'DAYS_REGISTRATION': 0}      
 
-   
-# system = DecisionExpertSystem(test)
-
-# system.transform_columns()
-# system.score()
-# print(system.get_decision())
 
