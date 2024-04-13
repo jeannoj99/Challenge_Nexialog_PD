@@ -95,94 +95,87 @@ df_logit_results = pd.DataFrame(logit_results, columns=["Variable", "Modalités"
 df_logit_results_cash = pd.DataFrame(logit_results_cash, columns=["Variable", "Modalités", "Coefficient", "std err", "z", "P>|z|", "[0.025, 0.975]"])
 df_logit_results_revo = pd.DataFrame(logit_results_revolving, columns=["Variable", "Modalités", "Coefficient", "std err", "z", "P>|z|", "[0.025, 0.975]"])
 
-# border_color = "#8C8C8C"
+border_color = "#8C8C8C"
 
-# style = {
-#     "height": 100,
-#     "border": f"1px solid {border_color}",
-#     "marginTop": 20,
-#     "marginBottom": 20,
-#     "borderRadius": 10,  # Arrondir les bordures
-#     "backgroundColor": "white",  # Fond blanc
-# }
+style = {
+    #"height": 100,
+    "border": f"1px solid {border_color}",
+    "marginTop": 20,
+    #"marginBottom": 20,
+    "borderRadius": 10,  # Arrondir les bordures
+    "backgroundColor": "white",  # Fond blanc
+}
 
 layout = html.Div(
     [
-        # Première partie
-
-#         html.Div(
-#     children=[
-#         dmc.Container("Default container", style=style),
-#         dmc.Container(
-#             "xs container with xs horizontal padding", size="xs", px="xs", style=style
-#         ),
-#         dmc.Container(
-#             "200px container with 0px horizontal padding", size=200, px=0, style=style
-#         ),
-#     ]
-# )
-        html.Div(
-            [   
-                dmc.Title(f"All Contracts Model", order=1, style={'textAlign': 'center'}), 
-
-                html.Br(),
-
+        
+    html.Div(
+    [
+        dmc.Title("All Contracts Model", order=1, style={'textAlign': 'center'}), 
+        html.Br(),
+        
+        dmc.Container(
+            [   html.Br(),
                 dmc.Text("Modèle par défaut", weight=600),
-
                 html.Br(style={'margin-top': '11px'}),
-
                 html.Div(id='logit-results-all', style={'maxHeight': '300px', 'overflowY': 'auto'}),
-
                 html.Br(),
-
                 dmc.Group([dmc.Badge("Gini (train) : 0.330"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.322")]),
-
                 html.Br(),
+            ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
+        ),
 
-                # html.H3(children='Grille de score', style={'textAlign': 'center'}),
+        html.Br(),
+
+        dmc.Container(
+            [   html.Br(),
                 dmc.Title(f"Grille de score", order=3, style={'textAlign': 'center'}),
-
                 html.Label('Choix de la variable'),
-
                 dcc.Dropdown(id='dropdown-grid-score-all', value="AMT_CREDIT_NORM"),
-
-                html.Br(),
-
                 dcc.Graph(id='effectif-modalites-all', style={'height': '800px'}),
-
                 html.Br(),
-
                 dmc.Switch(id="switch-example-all", label="Afficher la grille de score", checked=False, onLabel="ON", offLabel="OFF"),
                 dmc.Space(h=30),
                 dmc.Text(id="switch-settings-all"),
-
-                # html.H3(children='Répartition des notes en fonction de la target', style={'textAlign': 'center'}),
-                dmc.Title(f"Répartition des notes en fonction de la target", order=3, style={'textAlign': 'center'}),
-
-                html.Label('Set de données'),
-
-                dcc.Dropdown(
-                    options=[
-                        {'label': 'data_train', 'value': 'data_train'},
-                        {'label': 'data_test', 'value': 'data_test'},
-                    ],
-                    value='data_train',
-                    id='dropdown-repartition-all'
-                ),
-
-                dcc.Graph(id='repartition-target-all'),
-            
+                html.Br()
             ],
-            style={'flex': '1', 'margin-right': '10px'}  # Utilisation de flexbox pour la mise en page
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
+
+        ),
+
+        dmc.Container(
+            [   html.Br(),
+                dmc.Title(f"Répartition des notes en fonction de la target", order=3, style={'textAlign': 'center'}),
+                html.Label('Set de données'),
+                dcc.Dropdown(
+                        options=[{'label': 'data_train', 'value': 'data_train'},
+                             {'label': 'data_test', 'value': 'data_test'},],
+                        value='data_train',
+                        id='dropdown-repartition-all'
+                        ),
+                dcc.Graph(id='repartition-target-all'),
+        ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
+
         )
+    ],
+    style={'flex': '1', 'margin-right': '10px', 'borderRadius': 10, 
+           #'backgroundColor': 'white'
+           }
+)
+
+
         ,
 
         # Deuxième partie
-        html.Div(
-            [
-
-                dmc.Title(f"Cash Loans/Revolving Loans", order=1, style={'textAlign': 'center'}),
-                html.Br(),
+html.Div(
+    [
+        dmc.Title("Cash Loans/Revolving Loans", order=1, style={'textAlign': 'center'}), 
+        html.Br(),
+        
+        dmc.Container(
+            [   html.Br(),
                 dmc.Text('Choix du modèle à comparer', weight=600),
                 dcc.Dropdown(
                     options=[
@@ -193,29 +186,33 @@ layout = html.Div(
                     id='main-dropdown'
                 ),
                 html.Div(id='logit-results', style={'maxHeight': '300px', 'overflowY': 'auto'}),
-
                 html.Br(),
-
                 dmc.Group(id="badge-group"),
-
                 html.Br(),
+            ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
+        ),
 
+        html.Br(),
+
+        dmc.Container(
+            [   html.Br(),
                 dmc.Title(f"Grille de score", order=3, style={'textAlign': 'center'}),
-
                 html.Label('Choix de la variable'),
-
                 dcc.Dropdown(id='dropdown-grid-score', value = "AMT_CREDIT_NORM"),
-
-                html.Br(),
-
                 dcc.Graph(id='effectif-modalites', style={'height': '800px'}),
-
                 html.Br(),
-
                 dmc.Switch(id="switch-example", label="Afficher la grille de score", checked=False, onLabel="ON", offLabel="OFF"),
                 dmc.Space(h=30),
                 dmc.Text(id="switch-settings"),
+                html.Br()
+            ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
 
+        ),
+
+        dmc.Container(
+            [   html.Br(),
                 dmc.Title(f"Répartition des notes en fonction de la target", order=3, style={'textAlign': 'center'}),
                 html.Label('Set de données'),
 
@@ -229,10 +226,15 @@ layout = html.Div(
                 ),
 
                 dcc.Graph(id='repartition-target'),
-            
-            ],
-            style={'flex': '1', 'margin-left': '10px'}  # Utilisation de flexbox pour la mise en page
-        ),
+        ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
+
+        )
+    ],
+    style={'flex': '1', 'margin-right': '10px', 'borderRadius': 10, 
+           #'backgroundColor': 'white'
+           }
+),
     ],
     style={'display': 'flex', 'justifyContent': 'space-between'}  # Pour aligner les deux parties à l'extrémité gauche et droite
 )
