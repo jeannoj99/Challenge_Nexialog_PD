@@ -20,6 +20,10 @@ from dash import Input, Output, State, dcc, html
 import pages.analyse_des_variables as analyse_des_variables
 import pages.modelisation as modelisation
 import pages.quantification as quantification
+import pages.octroi as octroi
+
+import warnings
+warnings.filterwarnings("ignore")
 # juste des notes
 
 #BS = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
@@ -102,7 +106,7 @@ submenu_2 = [
     ),
     dbc.Collapse(
         [
-            dbc.NavLink("Page 2.1", href="/page-2/1"),
+            dbc.NavLink("Octroi", href="/octroi"),
             dbc.NavLink("Page 2.2", href="/page-2/2"),
         ],
         id="submenu-2-collapse",
@@ -176,8 +180,8 @@ def render_page_content(pathname):
         return modelisation.layout
     elif pathname == "/quantification":
         return quantification.layout
-    elif pathname == "/page-2/1":
-        return html.P("Oh cool, this is page 2.1!")
+    elif pathname == "/octroi":
+        return octroi.layout
     elif pathname == "/page-2/2":
         return html.P("No way! This is page 2.2!")
     # If the user tries to reach a different page, return a 404 message
