@@ -6,6 +6,7 @@ import pandas as pd
 from jenkspy import JenksNaturalBreaks
 import plotly.express as px
 from dash import dash_table
+import plotly.graph_objects as go
 
 
 data_test = pd.read_csv("../data/data_seg_test.csv")
@@ -17,31 +18,72 @@ data_train_cash= pd.read_csv("../data/data_seg_train_cash.csv")
 data_test_revolving= pd.read_csv("../data/data_seg_test_revolving.csv")
 data_train_revolving= pd.read_csv("../data/data_seg_train_revolving.csv")
 
+data_seg_2020= pd.read_csv("../data/data_seg_2020.csv")
+data_seg_revolving_2020= pd.read_csv("../data/data_seg_revolving_2020.csv")
+data_seg_cash_2020= pd.read_csv("../data/data_seg_cash_2020.csv")
+
+
 def subplot_segment_default_rate(data):
     mean_target_by_segment = data.groupby('Segment')['TARGET'].mean().reset_index()
-    observation_count_by_segment = data['Segment'].value_counts(normalize=True).reset_index()
-    observation_count_by_segment.columns = ['Segment', 'Observation Rate']
-
-    # Barplot
-    fig_bar = px.bar(observation_count_by_segment, x='Segment', y='Observation Rate', color='Segment',
-                     labels={'Observation Rate': 'Taux d\'observation par segment'})
-
-    # Line plot
-    fig_line = px.line(mean_target_by_segment, x='Segment', y='TARGET', markers=True, line_shape='linear',
-                       labels={'TARGET': 'Taux de défaut'}, title='Taux de défaut ')
     
+    color_scale = []
 
-    #les deux
-    fig_combined = fig_bar.update_traces(marker=dict(color='navy'), selector=dict(type='bar'))
-    fig_combined.add_traces(fig_line.data)
-    return fig_combined
+    for segment, default_rate in zip(mean_target_by_segment['Segment'], mean_target_by_segment['TARGET']):
+        if default_rate < 0.03:
+            color_scale.append('green') 
+        elif default_rate < 0.1:
+            color_scale.append('yellow')  
+        else:
+            color_scale.append('red')   
+
+    # Create a dictionary to map segment to color
+    segment_color_map = dict(zip(mean_target_by_segment['Segment'], color_scale))
+
+    # Map the colors to the segments in the original order
+    bar_colors = [segment_color_map[segment] for segment in data['Segment'].value_counts(normalize=True).index]
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Bar(x=data['Segment'].value_counts(normalize=True).index,
+                         y=data['Segment'].value_counts(normalize=True),
+                         marker=dict(color=bar_colors),
+                         showlegend=False))
+    fig.add_trace(go.Scatter(x=mean_target_by_segment['Segment'],
+                             y=mean_target_by_segment['TARGET'],
+                             mode='lines+markers',
+                             line=dict(color='navy', width=2),
+                             yaxis='y2',
+                             showlegend=False))
+    fig.update_layout(xaxis=dict(title='Segment',tickmode='array', tickvals=mean_target_by_segment['Segment']),
+                      yaxis=dict(title='Répartition par segment', color='blue'),
+                      yaxis2=dict(title='Taux de défaut', color='red', overlaying='y', side='right'))
+    
+    return fig
+
+
 
 def show_risk_stability_overtime(data: pd.DataFrame, colname: str):
     result = data.groupby([colname, "date_annee"])['TARGET'].value_counts(normalize=True).unstack().fillna(0)[1]
     fig = px.line(result, x=result.index.get_level_values("date_annee"),
                   y=result.values, color=result.index.get_level_values(f"{colname}"), markers=True)
-    fig.update_layout(xaxis_title="date_annee", yaxis_title="taux de défaut")
+    fig.update_layout(xaxis=dict(title="date_annee", type='category'),
+                      yaxis_title="taux de défaut",
+                      legend_title="Segment")
     return fig
+
+
+def show_risk_stability_overtime_2(data: pd.DataFrame, colname: str):
+    result = data.groupby([colname, "date_annee"])['TARGET'].mean().reset_index()
+    fig = px.bar(result, x="Segment", y="TARGET", color=colname, barmode='group')
+    fig.update_layout(xaxis=dict(title="Taux de défaut par segment pour l'année 2020", type='category'),
+                      yaxis_title="Taux de défaut moyen",
+                      legend_title="Segment")
+    
+
+    return fig
+
+
+
 
 #tableau
 PD = [
@@ -92,6 +134,7 @@ layout = html.Div([
         html.H2(children='Graphiques de répartition et de taux de défaut par CHR', style={'textAlign': 'center'}),
         dcc.Graph(figure=subplot_segment_default_rate(data_train), id='subplot_graph', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
         dcc.Graph(figure=subplot_segment_default_rate(data_test), id='subplot_graph2', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
+        dcc.Graph(figure=subplot_segment_default_rate(data_seg_2020), id='subplot_graph3', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
     ], style={'textAlign': 'center', 'margin-bottom': '20px'}),  
 
 
@@ -99,7 +142,9 @@ layout = html.Div([
         html.H2(children='Graphiques de stabilité du risque au fil du temps', style={'textAlign': 'center'}),
         dcc.Graph(figure=show_risk_stability_overtime(data_train, "Segment"), id='second_graph', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
         dcc.Graph(figure=show_risk_stability_overtime(data_test, "Segment"), id='second_graph2', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
+        dcc.Graph(figure=show_risk_stability_overtime_2(data_seg_2020, "Segment"), id='second_graph3', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
     ], style={'textAlign': 'center', 'margin-bottom': '20px'}), 
+
 
 
     html.Div([
@@ -116,8 +161,10 @@ layout = html.Div([
 @callback(
     [Output('subplot_graph', 'figure'),
      Output('subplot_graph2', 'figure'),
+     Output('subplot_graph3', 'figure'),
      Output('second_graph', 'figure'),
      Output('second_graph2', 'figure'),
+     Output('second_graph3', 'figure'),
      Output('table', 'data')],
     [Input('contract-type-dropdown', 'value')]
 )
@@ -125,20 +172,26 @@ def update_graph(selected_contract_type):
     if selected_contract_type == 'all_contracts':
         subplot_fig = subplot_segment_default_rate(data_train)
         subplot_fig2 = subplot_segment_default_rate(data_test)
-        risk_fig = show_risk_stability_overtime(data_test, "Segment")
-        risk_fig2 = show_risk_stability_overtime(data_train, "Segment")
-        return subplot_fig, subplot_fig2, risk_fig, risk_fig2, df_PD.to_dict('records')
+        subplot_fig3 = subplot_segment_default_rate(data_seg_2020)
+        risk_fig = show_risk_stability_overtime(data_train, "Segment")
+        risk_fig2 = show_risk_stability_overtime(data_test, "Segment")
+        risk_fig3 = show_risk_stability_overtime_2(data_seg_2020, "Segment")
+        return subplot_fig, subplot_fig2,subplot_fig3, risk_fig, risk_fig2,risk_fig3, df_PD.to_dict('records')
     elif selected_contract_type == 'revolving_loans':
         subplot_fig = subplot_segment_default_rate(data_train_revolving)
         subplot_fig2 = subplot_segment_default_rate(data_test_revolving)
-        risk_fig = show_risk_stability_overtime(data_test_revolving, "Segment")
-        risk_fig2 = show_risk_stability_overtime(data_train_revolving, "Segment")
-        return subplot_fig, subplot_fig2, risk_fig, risk_fig2, df_PD_revolving.to_dict('records')  
+        subplot_fig3 = subplot_segment_default_rate(data_seg_revolving_2020)
+        risk_fig = show_risk_stability_overtime(data_train_revolving, "Segment")
+        risk_fig2 = show_risk_stability_overtime(data_test_revolving, "Segment")
+        risk_fig3 = show_risk_stability_overtime_2(data_seg_revolving_2020, "Segment")
+        return subplot_fig, subplot_fig2,subplot_fig3, risk_fig, risk_fig2,risk_fig3, df_PD_revolving.to_dict('records')  
     elif selected_contract_type == 'cash_loans':
         subplot_fig = subplot_segment_default_rate(data_train_cash)
         subplot_fig2 = subplot_segment_default_rate(data_test_cash)
-        risk_fig = show_risk_stability_overtime(data_test_cash, "Segment")
-        risk_fig2 = show_risk_stability_overtime(data_train_cash, "Segment")
-        return subplot_fig, subplot_fig2, risk_fig, risk_fig2, df_PD_cash.to_dict('records')  
+        subplot_fig3 = subplot_segment_default_rate(data_seg_cash_2020)
+        risk_fig = show_risk_stability_overtime(data_train_cash, "Segment")
+        risk_fig2 = show_risk_stability_overtime(data_test_cash, "Segment")
+        risk_fig3 = show_risk_stability_overtime_2(data_seg_cash_2020, "Segment")
+        return subplot_fig, subplot_fig2,subplot_fig3, risk_fig, risk_fig2,risk_fig3, df_PD_cash.to_dict('records')  
     else:
         return [html.P("Sélectionnez un type de contrat")]
