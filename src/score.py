@@ -138,3 +138,4 @@ def subplot_segment_default_rate(data):
 def attribute_chr(score,threshold):
     return pd.cut(score, bins=threshold, labels=[i for i in range(len(threshold))])
 
+

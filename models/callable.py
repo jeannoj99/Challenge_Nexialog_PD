@@ -101,14 +101,16 @@ class DecisionExpertSystem :
             self.data['AMT_CREDIT_NORM']=self.discretizers['AMT_CREDIT_NORM'].transform(self.data['AMT_CREDIT_NORM'])
             self.data['CB_NB_CREDIT_CLOSED']=self.discretizers['CB_NB_CREDIT_CLOSED'].transform(self.data['CB_NB_CREDIT_CLOSED'])
             self.data['CB_DAYS_CREDIT']=self.discretizers['CB_DAYS_CREDIT'].transform(self.data['CB_DAYS_CREDIT'])
-            
             pass
+        
         elif self.contract_type =="Revolving loans":
-            self.data['BORROWER_AGE']=self.discretizers['BORROWER_AGE'].transform(self.data['BORROWER_AGE'])
+            # self.data['BORROWER_AGE']=self.discretizers['BORROWER_AGE'].transform(self.data['BORROWER_AGE'])
             self.data['BORROWER_SENIORITY']=self.discretizers['BORROWER_SENIORITY'].transform(self.data['BORROWER_SENIORITY'])
-            self.data['AMT_CREDIT_NORM']=self.discretizers['AMT_CREDIT_NORM'].transform(self.data['AMT_CREDIT_NORM'])
+            # self.data['AMT_CREDIT_NORM']=self.discretizers['AMT_CREDIT_NORM'].transform(self.data['AMT_CREDIT_NORM'])
             self.data['CB_NB_CREDIT_CLOSED']=self.discretizers['CB_NB_CREDIT_CLOSED'].transform(self.data['CB_NB_CREDIT_CLOSED'])
             self.data['CB_DAYS_CREDIT']=self.discretizers['CB_DAYS_CREDIT'].transform(self.data['CB_DAYS_CREDIT'])
+            self.data["AMT_GOODS_PRICE"] = self.discretizers['AMT_GOODS_PRICE'].transform(self.data['AMT_GOODS_PRICE'])
+            self.data["DAYS_LAST_PHONE_CHANGE"] = self.discretizers['DAYS_LAST_PHONE_CHANGE'].transform(self.data['DAYS_LAST_PHONE_CHANGE'])
             pass
         
     def transform_columns(self):
