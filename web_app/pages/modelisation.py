@@ -120,7 +120,7 @@ layout = html.Div(
                 html.Br(style={'margin-top': '11px'}),
                 html.Div(id='logit-results-all', style={'maxHeight': '300px', 'overflowY': 'auto'}),
                 html.Br(),
-                dmc.Group([dmc.Badge("Gini (train) : 0.330"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.322")]),
+                dmc.Group([dmc.Badge("Gini (train) : 0.33"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.32")]),
                 html.Br(),
             ],
             style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
@@ -143,6 +143,8 @@ layout = html.Div(
             style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
 
         ),
+
+        html.Br(),
 
         dmc.Container(
             [   html.Br(),
@@ -210,6 +212,8 @@ html.Div(
             style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
 
         ),
+
+        html.Br(),
 
         dmc.Container(
             [   html.Br(),
@@ -455,9 +459,9 @@ def update_results(selected_model):
 
 def evaluate_model(selected_model):
     if selected_model == "Cash Loans" :
-        return dmc.Group([dmc.Badge("Gini (train) : 0.327"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.320")])
+        return dmc.Group([dmc.Badge("Gini (train) : 0.32"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.32")])
     elif selected_model == "Revolving Loans" :
-        return dmc.Group([dmc.Badge("Gini (train) : 0.373"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.360")])
+        return dmc.Group([dmc.Badge("Gini (train) : 0.37"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.36")])
 
 @callback(Output("switch-settings", "children"), 
           [Input("switch-example", "checked"),
