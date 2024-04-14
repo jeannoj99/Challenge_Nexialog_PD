@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import plotly.figure_factory as ff
-
+import dash_mantine_components as dmc
 
 grid_score = pd.read_excel("../data/grille_de_score.xlsx",index_col=0)
 grid_score = grid_score.sort_values(by=['Variable', 'tx_defaut'], ascending=[True, False])
@@ -95,101 +95,322 @@ df_logit_results = pd.DataFrame(logit_results, columns=["Variable", "Modalités"
 df_logit_results_cash = pd.DataFrame(logit_results_cash, columns=["Variable", "Modalités", "Coefficient", "std err", "z", "P>|z|", "[0.025, 0.975]"])
 df_logit_results_revo = pd.DataFrame(logit_results_revolving, columns=["Variable", "Modalités", "Coefficient", "std err", "z", "P>|z|", "[0.025, 0.975]"])
 
+border_color = "#8C8C8C"
+
+style = {
+    #"height": 100,
+    "border": f"1px solid {border_color}",
+    "marginTop": 20,
+    #"marginBottom": 20,
+    "borderRadius": 10,  # Arrondir les bordures
+    "backgroundColor": "white",  # Fond blanc
+}
+
 layout = html.Div(
     [
-        html.Div(
-            html.H1(children='Modélisation', style={'textAlign': 'center'}),
-            style={'margin-bottom': '20px'}
+        
+    html.Div(
+    [
+        dmc.Title("All Contracts Model", order=1, style={'textAlign': 'center'}), 
+        html.Br(),
+        
+        dmc.Container(
+            [   html.Br(),
+                dmc.Text("Modèle par défaut", weight=600),
+                html.Br(style={'margin-top': '11px'}),
+                html.Div(id='logit-results-all', style={'maxHeight': '300px', 'overflowY': 'auto'}),
+                html.Br(),
+                dmc.Group([dmc.Badge("Gini (train) : 0.33"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.32")]),
+                html.Br(),
+            ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
         ),
 
-        html.Div(
-            [
-                html.Label('Choix du modèle'),
+        html.Br(),
+
+        dmc.Container(
+            [   html.Br(),
+                dmc.Title(f"Grille de score", order=3, style={'textAlign': 'center'}),
+                html.Label('Choix de la variable'),
+                dcc.Dropdown(id='dropdown-grid-score-all', value="AMT_CREDIT_NORM"),
+                dcc.Graph(id='effectif-modalites-all', style={'height': '800px'}),
+                html.Br(),
+                dmc.Switch(id="switch-example-all", label="Afficher la grille de score", checked=False, onLabel="ON", offLabel="OFF"),
+                dmc.Space(h=30),
+                dmc.Text(id="switch-settings-all"),
+                html.Br()
+            ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
+
+        ),
+
+        html.Br(),
+
+        dmc.Container(
+            [   html.Br(),
+                dmc.Title(f"Répartition des notes en fonction de la target", order=3, style={'textAlign': 'center'}),
+                html.Label('Set de données'),
+                dcc.Dropdown(
+                        options=[{'label': 'data_train', 'value': 'data_train'},
+                             {'label': 'data_test', 'value': 'data_test'},],
+                        value='data_train',
+                        id='dropdown-repartition-all'
+                        ),
+                dcc.Graph(id='repartition-target-all'),
+        ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
+
+        )
+    ],
+    style={'flex': '1', 'margin-right': '10px', 'borderRadius': 10, 
+           #'backgroundColor': 'white'
+           }
+)
+
+
+        ,
+
+        # Deuxième partie
+html.Div(
+    [
+        dmc.Title("Cash Loans/Revolving Loans", order=1, style={'textAlign': 'center'}), 
+        html.Br(),
+        
+        dmc.Container(
+            [   html.Br(),
+                dmc.Text('Choix du modèle à comparer', weight=600),
                 dcc.Dropdown(
                     options=[
                         {'label': 'Cash Loans', 'value': 'Cash Loans'},
                         {'label': 'Revolving Loans', 'value': 'Revolving Loans'},
-                        {'label': 'All contracts', 'value': 'All contracts'},
                     ],
-                    value='Cash Loans',id='main-dropdown'
+                    value='Cash Loans',
+                    id='main-dropdown'
                 ),
-
+                html.Div(id='logit-results', style={'maxHeight': '300px', 'overflowY': 'auto'}),
+                html.Br(),
+                dmc.Group(id="badge-group"),
+                html.Br(),
             ],
-            style={'padding': 10, 'flex': 1}
-        ),
-      
-      html.Div(id='logit-results', style={'maxHeight': '300px', 'overflowY': 'auto'}),
-
-      html.Br(),
-
-      html.Div(
-            html.H3(children='Grille de score', style={'textAlign': 'center'}),
-            style={'margin-bottom': '20px'}
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
         ),
 
+        html.Br(),
 
-        html.Div(
-            [
+        dmc.Container(
+            [   html.Br(),
+                dmc.Title(f"Grille de score", order=3, style={'textAlign': 'center'}),
                 html.Label('Choix de la variable'),
-                dcc.Dropdown(
-                    id='dropdown-grid-score'
-                ),
-
+                dcc.Dropdown(id='dropdown-grid-score', value = "AMT_CREDIT_NORM"),
+                dcc.Graph(id='effectif-modalites', style={'height': '800px'}),
+                html.Br(),
+                dmc.Switch(id="switch-example", label="Afficher la grille de score", checked=False, onLabel="ON", offLabel="OFF"),
+                dmc.Space(h=30),
+                dmc.Text(id="switch-settings"),
+                html.Br()
             ],
-            style={'padding': 10, 'flex': 1}
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
+
         ),
 
-        dcc.Graph(id='effectif-modalites', style={'height': '800px'}),
+        html.Br(),
 
-        html.Div(
-            html.H3(children='Répartition des notes en fonction de la target', style={'textAlign': 'center'}),
-            style={'margin-bottom': '20px'}
-        ),
-
-        html.Div(
-            [
+        dmc.Container(
+            [   html.Br(),
+                dmc.Title(f"Répartition des notes en fonction de la target", order=3, style={'textAlign': 'center'}),
                 html.Label('Set de données'),
+
                 dcc.Dropdown(
                     options=[
                         {'label': 'data_train', 'value': 'data_train'},
                         {'label': 'data_test', 'value': 'data_test'},
-                        
                     ],
-                    value='data_train',id='dropdown-repartition'
+                    value='data_train',
+                    id='dropdown-repartition'
                 ),
 
-            ],
-            style={'padding': 10, 'flex': 1}
-        ),
-      
-      dcc.Graph(id='repartition-target'),
+                dcc.Graph(id='repartition-target'),
+        ],
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
 
+        )
     ],
-    style={'display': 'flex', 'flexDirection': 'column'}
+    style={'flex': '1', 'margin-right': '10px', 'borderRadius': 10, 
+           #'backgroundColor': 'white'
+           }
+),
+    ],
+    style={'display': 'flex', 'justifyContent': 'space-between'}  # Pour aligner les deux parties à l'extrémité gauche et droite
 )
-
 
 ###########################################################################################################
 ########################################## CALLBACKS ######################################################
 ###########################################################################################################
 
-# choix du modèle et affiche les bonnes variables pour la grille de score selon modèle
+##### PARTIE GAUCHE
+
+#choix du modèle et affiche les bonnes variables pour la grille de score selon modèle
 @callback(
-    Output('dropdown-grid-score', 'options'),
+    Output('dropdown-grid-score-all', 'options'),
     [Input('main-dropdown', 'value')]
 )
-def update_grid_score_options(selected_model):
-    if selected_model == 'All contracts':
-        return [
+def update_grid_score_options(value):
+    return [
             {'label': 'AMT_CREDIT_NORM', 'value': 'AMT_CREDIT_NORM'},
             {'label': 'BORROWER_AGE', 'value': 'BORROWER_AGE'},
             {'label': 'BORROWER_SENIORITY', 'value': 'BORROWER_SENIORITY'},
             {'label': 'CB_DAYS_CREDIT', 'value': 'CB_DAYS_CREDIT'},
             {'label': 'CB_NB_CREDIT_CLOSED', 'value': 'CB_NB_CREDIT_CLOSED'},
             {'label': 'NAME_EDUCATION_TYPE', 'value': 'NAME_EDUCATION_TYPE'},
-            {'label': 'OCCUPATION_TYPE', 'value': 'OCCUPATION_TYPE'},   
-        ]
-    elif selected_model == "Cash Loans":
+            {'label': 'OCCUPATION_TYPE', 'value': 'OCCUPATION_TYPE'} ]
+
+
+# résultats du logit en fonction du modèle choisi
+@callback(
+    Output('logit-results-all', 'children'),
+    [Input('main-dropdown', 'value')]
+)
+def update_results_all(value):
+    columns, values = df_logit_results.columns, df_logit_results.values
+    header = [html.Tr([html.Th(col) for col in columns])]
+    rows = [html.Tr([html.Td(cell) for cell in row]) for row in values]
+    table = [html.Thead(header), html.Tbody(rows)]
+    return dmc.Table(children=table, striped=True, highlightOnHover=True, withBorder=True, withColumnBorders=True)
+
+
+@callback(Output("switch-settings-all", "children"), 
+          Input("switch-example-all", "checked"))
+
+def settings(checked):
+    columns, values = grid_score.columns, grid_score.values
+    header = [html.Tr([html.Th(col) for col in columns])]
+    rows = [html.Tr([html.Td(cell) for cell in row]) for row in values]
+    table = [html.Thead(header), html.Tbody(rows)]
+    if checked :
+        return dmc.Table(children=table, striped=True, highlightOnHover=True, withBorder=True, withColumnBorders=True)
+    else :
+        return ""
+
+# Grille de score en fonction de la variable sélectionnée
+@callback(
+    Output('effectif-modalites-all', 'figure'),
+    [Input('dropdown-grid-score-all', 'value'),
+     #Input('main-dropdown', 'value')
+     ]
+)
+
+def update_score_grid_graph(selected_variable): 
+    data_filtered = grid_score[grid_score["Variable"] == selected_variable]
+
+    # effectif/modalités
+    fig1 = px.pie(data_filtered, 
+          names="Modalités", 
+          values='effectif',
+          height=800
+          )
+
+    # notes/modalités
+    fig2 = px.bar(data_filtered, y="Modalités", x='Note', orientation='h', text_auto=True)
+
+    # taux de défaut/modalités
+    fig3 = px.line(data_filtered, x="Modalités",y="tx_defaut", markers=True, text="tx_defaut")
+    fig3.update_traces(textposition="top right")
+
+    # tableau
+    fig4 =  go.Table(
+    header=dict(
+        values=["Modalités","Coefficient","p-value"],
+        font=dict(size=15),
+        align="center"
+    ),
+    cells=dict(
+        values=[data_filtered[k].tolist() for k in data_filtered.columns[[1,2,4]]],
+        align = "center")
+    )
+
+    # mettre plusieurs graphes côte à côte
+    fig = make_subplots(rows=2, cols=2, subplot_titles=("Répartition de l'effectif de la modalité", 'Notes par modalité', "Taux de défaut en fonction de la modalité","Statistiques"), 
+        specs=[[{"type": "pie"}, {"type": "bar"}],
+        [{"type": "scatter"}, {"type": "pie"}]]
+        )
+
+
+    for trace in fig1.data:
+        fig.add_trace(trace, row=1, col=1)
+    for trace in fig2.data:
+        fig.add_trace(trace, row=1, col=2)
+    for trace in fig3.data:
+        fig.add_trace(trace, row=2, col=1)
+   
+    fig.add_trace(fig4, row=2, col=2)
+
+    # Update xaxis properties
+    fig.update_xaxes(title_text="Notes", row=1, col=2)
+    fig.update_xaxes(title_text="Modalités", row=2, col=1)
+
+    # Update yaxis properties
+    fig.update_yaxes(title_text="Modalités", row=1, col=2, side="right")
+    fig.update_yaxes(title_text="Taux de défaut", row=2, col=1)
+    
+
+    # Mettre à jour la disposition de la figure
+    fig.update_layout(
+        title_text='Dashboard', 
+        title_x=0.5,
+        template='simple_white' , 
+                      margin=dict(l=0, r=0, t=100, b=100), # agrandir les marges
+                      legend=dict(orientation='h', x=0, y=0.5)  # placer la légende
+                          )
+
+    return fig.to_dict()
+
+
+@callback(
+    Output('repartition-target-all', 'figure'),
+    [Input('dropdown-repartition-all', 'value'),
+     #Input('main-dropdown', 'value')
+     ]
+)
+
+def update_repartition(selected_data):
+    data_repartition = pd.DataFrame()
+    if selected_data == "data_train" :
+        data_repartition = data_train
+    else :
+        data_repartition = data_test
+    
+   
+     # Création du displot avec ff.displot
+    fig = ff.create_distplot(
+         [data_repartition['Note'][data_repartition['TARGET'] == 0], 
+          data_repartition['Note'][data_repartition['TARGET'] == 1]],
+         group_labels=['Target = 0', 'Target = 1'],
+         colors=['blue', 'red'], 
+         show_hist=False,
+         show_rug=False
+     )
+
+     # Mise en forme du titre et des axes
+    fig.update_layout(
+         title=f'Distribution de TARGET en fonction de la Note sur {selected_data} pour "All Contracts"',
+         xaxis_title='Note',
+         yaxis_title='Fréquence',
+         template="simple_white"
+     )
+
+    return fig
+
+
+
+##### PARTIE DROITE
+
+#choix du modèle et affiche les bonnes variables pour la grille de score selon modèle
+@callback(
+    Output('dropdown-grid-score', 'options'),
+    [Input('main-dropdown', 'value')]
+)
+def update_grid_score_options(selected_model):
+    if selected_model == "Cash Loans":
         return [
             {'label': 'AMT_CREDIT_NORM', 'value': 'AMT_CREDIT_NORM'},
             {'label': 'BORROWER_AGE', 'value': 'BORROWER_AGE'},
@@ -220,29 +441,47 @@ def update_grid_score_options(selected_model):
     [Input('main-dropdown', 'value')]
 )
 def update_results(selected_model):
-    if selected_model == 'All contracts':
-        df = df_logit_results
-    elif selected_model == "Cash Loans" :
+    if selected_model == "Cash Loans" :
         df = df_logit_results_cash
     elif selected_model == "Revolving Loans" :
         df = df_logit_results_revo
+    
+    columns, values = df.columns, df.values
+    header = [html.Tr([html.Th(col) for col in columns])]
+    rows = [html.Tr([html.Td(cell) for cell in row]) for row in values]
+    table = [html.Thead(header), html.Tbody(rows)]
+    return dmc.Table(children=table, striped=True, highlightOnHover=True, withBorder=True, withColumnBorders=True)
 
-        # Afficher df_logit_results
-    return html.Table(
-            [
-                html.Thead(  # En-tête de la table
-                    html.Tr([html.Th(col) for col in df.columns])
-                ),
-                html.Tbody(  # Corps de la table
-                    [html.Tr([html.Td(df.iloc[i][col]) for col in df.columns]) for i in
-                     range(len(df))]
-                )
-            ],
-            className='table table-sm overflow-auto' # table pour CSS et table-sm pour small
-        )
-    # else:
-    #     return html.Div()
+@callback(
+        Output("badge-group","children"),
+        Input('main-dropdown', 'value')
+)
 
+def evaluate_model(selected_model):
+    if selected_model == "Cash Loans" :
+        return dmc.Group([dmc.Badge("Gini (train) : 0.32"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.32")])
+    elif selected_model == "Revolving Loans" :
+        return dmc.Group([dmc.Badge("Gini (train) : 0.37"), dmc.Space(w=20), dmc.Badge("Gini (test) : 0.36")])
+
+@callback(Output("switch-settings", "children"), 
+          [Input("switch-example", "checked"),
+           Input('main-dropdown', 'value')])
+
+def settings(checked, selected_model):
+
+    if selected_model == "Cash Loans" :
+        df = grid_score_cash
+    elif selected_model == "Revolving Loans" :
+        df = grid_score_revolving
+
+    columns, values = df.columns, df.values
+    header = [html.Tr([html.Th(col) for col in columns])]
+    rows = [html.Tr([html.Td(cell) for cell in row]) for row in values]
+    table = [html.Thead(header), html.Tbody(rows)]
+    if checked :
+        return dmc.Table(children=table, striped=True, highlightOnHover=True, withBorder=True, withColumnBorders=True)
+    else :
+        return ""
 
 # Grille de score en fonction de la variable sélectionnée
 @callback(
@@ -252,10 +491,7 @@ def update_results(selected_model):
 )
 
 def update_score_grid_graph(selected_variable, selected_model):
-    # if selected_variable == "AMT_CREDIT_NORM" and selected_model == "All contracts":
-    if selected_model == "All contracts": 
-        data_filtered = grid_score[grid_score["Variable"] == selected_variable]
-    elif selected_model == "Cash Loans" :
+    if selected_model == "Cash Loans" :
         data_filtered = grid_score_cash[grid_score_cash["Variable"] == selected_variable]
     elif selected_model == "Revolving Loans" :
         data_filtered = grid_score_revolving[grid_score_revolving["Variable"] == selected_variable]
@@ -287,7 +523,7 @@ def update_score_grid_graph(selected_variable, selected_model):
     )
 
     # mettre plusieurs graphes côte à côte
-    fig = make_subplots(rows=2, cols=2, subplot_titles=("Répartition de l'effectif par rapport à la modalité", 'Notes par modalité', "Taux de défaut en fonction de la modalité","Statistiques"), 
+    fig = make_subplots(rows=2, cols=2, subplot_titles=("Répartition de l'effectif de la modalité", 'Notes par modalité', "Taux de défaut en fonction de la modalité","Statistiques"), 
         specs=[[{"type": "pie"}, {"type": "bar"}],
         [{"type": "scatter"}, {"type": "pie"}]]
         )
@@ -307,13 +543,17 @@ def update_score_grid_graph(selected_variable, selected_model):
     fig.update_xaxes(title_text="Modalités", row=2, col=1)
 
     # Update yaxis properties
-    fig.update_yaxes(title_text="Modalités", row=1, col=2)
+    fig.update_yaxes(title_text="Modalités", row=1, col=2, side="right")
     fig.update_yaxes(title_text="Taux de défaut", row=2, col=1)
     
 
     # Mettre à jour la disposition de la figure
-    fig.update_layout(title_text='Dashboard pour la grille de score')
-
+    fig.update_layout(title_text='Dashboard', 
+        title_x=0.5, template='simple_white' , 
+                      margin=dict(l=0, r=0, t=100, b=100),
+                      legend=dict(orientation='h', x=0, y=0.5)
+                          )
+   
     return fig.to_dict()
 
 
@@ -325,12 +565,7 @@ def update_score_grid_graph(selected_variable, selected_model):
 
 def update_repartition(selected_data,selected_model):
     data_repartition = pd.DataFrame()
-    if selected_model == 'All contracts':
-        if selected_data == "data_train" :
-            data_repartition = data_train
-        else :
-            data_repartition = data_test
-    elif selected_model == 'Cash Loans':
+    if selected_model == 'Cash Loans':
         if selected_data == "data_train" :
             data_repartition = data_train_cash
         else :
@@ -355,7 +590,8 @@ def update_repartition(selected_data,selected_model):
     fig.update_layout(
          title=f'Distribution de TARGET en fonction de la Note sur {selected_data} pour {selected_model}',
          xaxis_title='Note',
-         yaxis_title='Fréquence'
+         yaxis_title='Fréquence',
+         template = "simple_white"
      )
 
     return fig
