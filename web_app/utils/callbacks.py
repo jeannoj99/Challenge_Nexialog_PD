@@ -1,6 +1,7 @@
 import sys
 import os
-from dash import Dash, html, dcc,Input, Output, State, callback, dash_table, MATCH, ALL, ctx
+from dash import Dash, html, dcc,Input, Output, State, callback, dash_table, MATCH, ALL, ctx, no_update
+from dash.exceptions import PreventUpdate
 sys.path.append(os.getcwd())
 from models.callable import DecisionExpertSystem
 import pandas as pd
@@ -16,8 +17,9 @@ numeric_vars = ["CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT", "AMT_CREDIT",
 
 
 @callback(
-        Output('decision', 'children'),
-        Output('decision','style'),
+        Output('decision-alert', 'children'),
+        Output('decision-alert', 'color'),
+        Output('decision-alert', 'style'),
         Output('dropdown-NAME_CONTRACT_TYPE', 'value'),
         Output('dropdown-OCCUPATION_TYPE', 'value'),
         Output('dropdown-NAME_EDUCATION_TYPE', 'value'),
@@ -67,6 +69,8 @@ def update_decision_output(n_clicks, *values):
         decision, decision_color = data.get_decision()
         
         # Mise à jour du style de l'élément 'decision' avec la couleur obtenue
-        decision_style = {'textAlign': 'center', 'padding': '20px', 'backgroundColor': decision_color}
+        decision_style = {'display': 'block'}
         
-        return decision, decision_style, *values
+        return decision, decision_color, decision_style, *values
+    
+    

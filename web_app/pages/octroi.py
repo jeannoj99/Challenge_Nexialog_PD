@@ -2,7 +2,7 @@ import dash
 import pandas as pd
 import sys
 import os
-from dash import Input, Output, State, html, dcc, dash_table, MATCH, ALL, ctx
+from dash import Input, Output, State, html, dcc, dash_table, MATCH, ALL, ctx, callback
 import dash_mantine_components as dmc
 sys.path.append(os.getcwd())
 from models.callable import DecisionExpertSystem
@@ -67,7 +67,7 @@ layout = html.Div(
         ),
         dmc.Container(
             dmc.Paper(
-                html.Div("Credit decision will be displayed here", id="decision", style={'textAlign': 'center', 'padding': '20px'}),
+                dmc.Alert("Credit decision will be displayed here", id="decision-alert", color="gray", withCloseButton=True, style={'display': 'none'}),
                 withBorder=True,
                 radius="md",
                 shadow="xs",
@@ -80,6 +80,7 @@ layout = html.Div(
         #     dmc.Progress(id='probability', value=55, className='progressbar', color='green', label='55%', size='xl'),
         #     style={'margin': '0 auto 20px'}
         # ),
+        dcc.Store(id='alert-visible', data={'visible': True}),  # Stockage de l'état de visibilité
         html.Div(id='output-container')
     ],
     style={'max-width': '800px', 'margin': 'auto'}
@@ -87,13 +88,15 @@ layout = html.Div(
 
 
 
-# # Callback pour traiter la soumission des données et afficher les résultats
-# @octroi.callback(
-#         Output('decision', 'children'),
-#         Output('decision','style'),
+# Callback pour traiter la soumission des données et afficher les résultats
+# @callback(
+#         Output('decision-alert', 'children'),
+#         Output('decision-alert', 'color'),
+#         Output('decision-alert', 'style'),
 #         Output('dropdown-NAME_CONTRACT_TYPE', 'value'),
 #         Output('dropdown-OCCUPATION_TYPE', 'value'),
 #         Output('dropdown-NAME_EDUCATION_TYPE', 'value'),
+#         Output('dropdown-CODE_GENDER', 'value'),
 #         Output('input-CB_NB_CREDIT_CLOSED', 'value'),
 #         Output('input-CB_DAYS_CREDIT', 'value'),
 #         Output('input-AMT_CREDIT', 'value'),
@@ -109,6 +112,7 @@ layout = html.Div(
 #         State('dropdown-NAME_CONTRACT_TYPE', 'value'),
 #         State('dropdown-OCCUPATION_TYPE', 'value'),
 #         State('dropdown-NAME_EDUCATION_TYPE', 'value'),
+#         State('dropdown-CODE_GENDER', 'value'),
 #         State('input-CB_NB_CREDIT_CLOSED', 'value'),
 #         State('input-CB_DAYS_CREDIT', 'value'),
 #         State('input-AMT_CREDIT', 'value'),
@@ -121,7 +125,7 @@ layout = html.Div(
 #         State('input-DAYS_LAST_PHONE_CHANGE', 'value'),
 #         prevent_initial_call=True
 # )
-# def update_output(n_clicks, *values):
+# def update_decision_output(n_clicks, *values):
 #     if ctx.triggered_id == 'submit-button':
 #         field_values = {}
 #         # Ajout des valeurs des dropdowns pour les variables catégorielles
@@ -138,8 +142,6 @@ layout = html.Div(
 #         decision, decision_color = data.get_decision()
         
 #         # Mise à jour du style de l'élément 'decision' avec la couleur obtenue
-#         decision_style = {'textAlign': 'center', 'padding': '20px', 'backgroundColor': decision_color}
+#         decision_style = {'display': 'block'}
         
-#         return decision, decision_style, *values
-
-
+#         return decision, decision_color, decision_style, *values
