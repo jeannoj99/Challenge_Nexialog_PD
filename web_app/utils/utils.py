@@ -19,7 +19,8 @@ def show_risk_stability_graph(data: pd.DataFrame, colname):
     fig.update_layout(title=f"Stabilité en risque de {colname}",
                       xaxis_title='date_annee',
                       yaxis_title='Taux de défaut',
-                      legend_title=colname)
+                      legend_title=colname,
+                      template = "simple_white")
     return fig
 
 def show_volume_stability_overtime(data:pd.DataFrame, colname:str, threshold=0.05):
@@ -37,7 +38,8 @@ def show_volume_stability_overtime(data:pd.DataFrame, colname:str, threshold=0.0
         title=f'Stabilité en volume de {colname}',
         xaxis_title='Temps',
         yaxis_title='Pourcentage',
-        legend_title=colname
+        legend_title=colname,
+        template = "simple_white"
     )
     return fig
 

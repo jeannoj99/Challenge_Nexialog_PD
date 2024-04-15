@@ -8,7 +8,7 @@ from utils.preprocessing import data_for_binary, data_for_lc, data_for_hc_nd, da
 from utils.preprocessing import low_category_non_stable_vars
 from utils.preprocessing import hc_vars_for_app_nd, hc_vars_for_app_d
 from utils.utils import cramers_v, mannwhitney_test, calculate_information_value, calculate_chi_stat
-
+import dash_mantine_components as dmc
 # variables binaires (b)
 @callback(
     Output('b_graph_risk_stability_overtime', 'figure'),
@@ -33,17 +33,19 @@ def binary_risk_info(binary_col):
     summary = ""
     binary_risk_non_stable_vars=["FLAG_MOBIL", "FLAG_CONT_MOBILE", "FLAG_EMAIL", "REG_REGION_NOT_LIVE_REGION", "REG_REGION_NOT_WORK_REGION","LIVE_REGION_NOT_WORK_REGION"]
     if binary_col in binary_risk_non_stable_vars:
-        summary+= f"{binary_col} est Non Stable en Risque !"
+        summary+= f"{binary_col} est non stable en risque"
     else:
-        summary+= f"{binary_col} est Stable en Risque !"
-    return summary
+        summary+= f"{binary_col} est stable en risque"
+    # return summary
+    return dmc.Alert(summary, title="Informations supplémentaires")
 
 @callback(
     Output('binary_vol_info', 'children'),
     Input('binary_col', 'value')
 )
 def binary_vol_info(binary_col): # toutes les binaires sont stables en volume
-    return f"{binary_col} est stable en volume !"
+    # return f"{binary_col} est stable en volume !"
+    return dmc.Alert(f"{binary_col} est stable en volume", title="Informations supplémentaires")
 
 
 # variables catégorielles faibles moda (lc)
@@ -68,9 +70,9 @@ def lc_volume_stability_graph(colname):
 )
 def lc_stability_info(lc_col):
     if lc_col in low_category_non_stable_vars:
-        return f"{lc_col} est Non Stable en Risque/Volume !"
+        return dmc.Alert(f"{lc_col} est non stable en risque/volume", title="Informations supplémentaires")
     else:
-        return f"{lc_col} est Stable en Risque/Volume !"
+        return dmc.Alert(f"{lc_col} est stable en risque/volume", title="Informations supplémentaires")
     
 # variables catégo a haute modalité (hc)
 
