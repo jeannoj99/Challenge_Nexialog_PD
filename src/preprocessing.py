@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
+from imblearn.over_sampling import SMOTE
 from sklearn.metrics import roc_auc_score
 
 def convert_numeric_to_category(df: pd.DataFrame):
@@ -16,11 +17,12 @@ class DecisionTreeDiscretizer:
         self.tree_max_bins = max_bins
         self.clf = DecisionTreeClassifier(criterion="gini", max_depth=int(round(self.tree_max_bins/2)),
                                           min_samples_split=0.05,
-                                           min_samples_leaf=0.05) #
+                                          min_samples_leaf=0.05) #
         self.target = target
 
     def fit(self, X_train):
         # Entraîner le modèle sur les données d'entraînement
+        
         self.clf.fit(X_train.values.reshape(-1, 1), self.target)
 
     def _get_tree_thresholds(self):
