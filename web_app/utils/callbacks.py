@@ -106,6 +106,7 @@ def hc_volume_stability_graph(selected_variable, checked):
     else:
         return show_volume_stability_overtime(data_for_hc_nd, selected_variable)
 
+# infos HC
 @callback(
     Output("hc_stability_info", "children"),
     [Input("dropdown_var_choice", "value"), Input("checkbox_discretized_choice", "checked")]
@@ -156,6 +157,23 @@ def hc_iv(colname,checked):
         return calculate_information_value(data_for_hc_d_train, colname)
     else:
         return calculate_information_value(data_for_hc_nd, colname) 
+    
+
+#### test ####
+@callback(
+    Output("all_info", "children"),
+    [Input("dropdown_var_choice", "value"), Input("checkbox_discretized_choice", "checked")]
+)
+def all_info_hc(colname,checked) :
+    if checked:
+        return dmc.Alert("faudra écrire une décision là. Est-ce stable en volume/risque ? \n test",
+                #{calculate_chi_stat(data_for_hc_d_train, colname)}, 
+                title="Informations supplémentaires")
+    else:
+        return dmc.Alert(["faudra écrire une décision ici. Est-ce stable en volume/risque ?",
+                calculate_chi_stat(data_for_hc_nd, colname)], title="Informations supplémentaires")
+
+### test ####
     
 # Jynaldo
 from models.callable import DecisionExpertSystem
