@@ -2,6 +2,7 @@ import dash
 import pandas as pd
 import sys
 import os
+from datetime import datetime
 from dash import Input, Output, State, html, dcc, dash_table, MATCH, ALL, ctx, callback
 import dash_mantine_components as dmc
 sys.path.append(os.getcwd())
@@ -32,6 +33,20 @@ def create_numeric_input(id, label):
         label=label,
         value=1
     )
+    
+    
+def create_date_input(id,label):
+    return dmc.DatePicker(
+        id=id,
+            label=label,
+            # description="You can also provide a description",
+            # minDate=date(2020, 8, 5),
+            value=datetime.now().date(),
+            maxDate=datetime.now().date(),
+            inputFormat="DD-MM-YYYY",
+            style={"width": 200},
+        )
+    
 
 # Définition du layout de l'application
 layout = html.Div(
@@ -48,15 +63,20 @@ layout = html.Div(
                 create_categorical_dropdown("dropdown-NAME_EDUCATION_TYPE", "NAME_EDUCATION_TYPE"),
                 create_categorical_dropdown("dropdown-CODE_GENDER", "CODE_GENDER"),
                 create_numeric_input("input-CB_NB_CREDIT_CLOSED", "CB_NB_CREDIT_CLOSED"),
-                create_numeric_input("input-CB_DAYS_CREDIT", "CB_DAYS_CREDIT"),
+                # create_numeric_input("input-CB_DAYS_CREDIT", "CB_DAYS_CREDIT"),
                 create_numeric_input("input-AMT_CREDIT", "AMT_CREDIT"),
                 create_numeric_input("input-CB_AMT_CREDIT_SUM", "CB_AMT_CREDIT_SUM"),
                 create_numeric_input("input-AMT_INCOME_TOTAL", "AMT_INCOME_TOTAL"),
                 create_numeric_input("input-AMT_GOODS_PRICE", "AMT_GOODS_PRICE"),
-                create_numeric_input("input-DAYS_BIRTH", "DAYS_BIRTH"),
-                create_numeric_input("input-DAYS_EMPLOYED", "DAYS_EMPLOYED"),
-                create_numeric_input("input-DAYS_REGISTRATION", "DAYS_REGISTRATION"),
-                create_numeric_input("input-DAYS_LAST_PHONE_CHANGE", "DAYS_LAST_PHONE_CHANGE")
+                # create_numeric_input("input-DAYS_BIRTH", "DAYS_BIRTH"),
+                # create_numeric_input("input-DAYS_EMPLOYED", "DAYS_EMPLOYED"),
+                # create_numeric_input("input-DAYS_REGISTRATION", "DAYS_REGISTRATION"),
+                # create_numeric_input("input-DAYS_LAST_PHONE_CHANGE", "DAYS_LAST_PHONE_CHANGE")
+                create_date_input("input-CB_DAYS_CREDIT", "CB_DAYS_CREDIT"),
+                create_date_input("input-DAYS_BIRTH", "DAYS_BIRTH"),
+                create_date_input("input-DAYS_EMPLOYED", "DAYS_EMPLOYED"),
+                create_date_input("input-DAYS_REGISTRATION", "DAYS_REGISTRATION"),
+                create_date_input("input-DAYS_LAST_PHONE_CHANGE", "DAYS_LAST_PHONE_CHANGE")
             ],
             id='fields-container',
             style={'margin': '0 auto 20px'}

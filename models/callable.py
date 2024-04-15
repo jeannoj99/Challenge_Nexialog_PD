@@ -4,6 +4,7 @@ import pickle
 import numpy as np
 import pandas as pd
 import openpyxl
+from datetime import datetime
 path=os.getcwd()
 sys.path.append(path+"")
 from src.preprocessing import DecisionTreeDiscretizer
@@ -125,6 +126,7 @@ class DecisionExpertSystem :
             self.data["AMT_CREDIT_NORM"]=self.data["AMT_CREDIT"]/self.data["AMT_GOODS_PRICE"]
             # self.data["AMT_ANNUITY"]=(self.data["AMT_ANNUITY"]+self.data["CB_AMT_ANNUITY"])/self.data["AMT_INCOME_TOTAL"]
             self.data["AMT_INCOME_TOTAL_NORM"]=self.data["AMT_INCOME_TOTAL"]/self.data["AMT_GOODS_PRICE"]
+            
             self.data["BORROWER_AGE"]=self.data["DAYS_BIRTH"].apply(np.abs)//365
             self.data["BORROWER_SENIORITY"]=self.data["DAYS_EMPLOYED"].apply(np.abs)//365
             self.data["BORROWER_FIDELITY"]=self.data["DAYS_REGISTRATION"].apply(np.abs)//365
