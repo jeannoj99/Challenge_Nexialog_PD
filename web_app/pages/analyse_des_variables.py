@@ -76,7 +76,10 @@ layout = html.Div(
 
  
 # A partir de là variables catégorielles (lc)
-        html.Div(
+
+    dmc.Container(
+        [
+            html.Div(
             [
                 html.Div(
                     [
@@ -112,29 +115,42 @@ layout = html.Div(
                 ),
 
                 html.Div(id="lc_stability_info"), 
+
+                html.Br() 
                
             ],
             style={'display': 'flex', 'flexDirection': 'column'}
-        ),  
+        ),
 
+
+        ],
+
+        style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="100"
+
+    ),
+         
+html.Br(),
 
 # A partir de là variable catégo (hc)
-        html.Div(
+
+        dmc.Container(
+
+            [
+                 html.Div(
             [ 
             #     html.H3(children='Variables catégorielles à grand nombre de modalités',
             # style={'margin-bottom': '15px','textAlign': 'left'}),
 
             dmc.Title('Variables catégorielles à grand nombre de modalités', order = 3, style={'textAlign': 'center'}),
 
+            html.Br(),
+
             dmc.Checkbox(label="Variables discrétisées", id="checkbox_discretized_choice", style={"width": 400, "margin": "0 auto", "marginBottom": 10, 'textAlign': 'center'}),
 
             dcc.Dropdown(id="dropdown_var_choice",options=[{'label': i, 'value': i} for i in hc_vars_for_app_nd],value='NAME_EDUCATION_TYPE', style={"width": 400, "margin": "0 auto", "marginBottom": 10, 'textAlign': 'center'}),
              
-             html.Div([
+            html.Div([
             
-            # dmc.Checkbox(label="Variables discrétisées", id="checkbox_discretized_choice"),
-            
-            # dcc.Dropdown(id="dropdown_var_choice",options=[{'label': i, 'value': i} for i in hc_vars_for_app_nd],value='NAME_EDUCATION_TYPE'),
             
             html.Br(),
             
@@ -179,7 +195,9 @@ layout = html.Div(
                                 )
                             ],
                             style={'flex': '1', 'width': '100%'} 
-                        )
+                        ),
+                        # new info supp
+                        # html.Div(id="all_info")
                     ],
                     style={'display': 'flex', 'flexDirection': 'row', 'width': '100%', 'marginTop': '20px'}  
                 )
@@ -188,5 +206,13 @@ layout = html.Div(
         )
         
 ])
+
+            ],
+
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="100"
+
+        ),
+
+       
     ]
 )
