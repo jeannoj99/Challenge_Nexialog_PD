@@ -14,7 +14,7 @@ from utils.callbacks import update_decision_output, fields, categorical_vars, nu
 df=pd.read_csv("data/application_train_vf.csv",parse_dates=["date_mensuelle"], index_col=0)
 
 # Initialisation de l'application Dash
-octroi = dash.Dash(__name__)
+
 
 displayed_label={
     "NAME_CONTRACT_TYPE": "TYPE OF CONTRACT",
