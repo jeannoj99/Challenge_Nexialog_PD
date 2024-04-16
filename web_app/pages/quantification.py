@@ -32,9 +32,9 @@ def subplot_segment_default_rate(data):
         if default_rate < 0.03:
             color_scale.append('green') 
         elif default_rate < 0.1:
-            color_scale.append('yellow')  
+            color_scale.append('#F1F74B')  
         else:
-            color_scale.append('red')   
+            color_scale.append('#DA3232')   
 
     # Create a dictionary to map segment to color
     segment_color_map = dict(zip(mean_target_by_segment['Segment'], color_scale))
@@ -54,9 +54,49 @@ def subplot_segment_default_rate(data):
                              line=dict(color='navy', width=2),
                              yaxis='y2',
                              showlegend=False))
+    
+    fig.update_layout(annotations=[
+        dict(
+            x=0.5,
+            y=1.15,
+            xref='paper',
+            yref='paper',
+            text="Taux de défaut",
+            showarrow=False,
+            font=dict(color="navy",size=14)
+        ),
+        dict(
+            x=0.15,
+            y=1.05,
+            xref='paper',
+            yref='paper',
+            text="Élevé",
+            showarrow=False,
+            font=dict(color="#DA3232", size=12)
+        ),
+        dict(
+            x=0.5,
+            y=1.05,
+            xref='paper',
+            yref='paper',
+            text="Modéré",
+            showarrow=False,
+            font=dict(color="#F1F74B", size=12)
+        ),
+        dict(
+            x=0.85,
+            y=1.05,
+            xref='paper',
+            yref='paper',
+            text="Faible",
+            showarrow=False,
+            font=dict(color="green", size=12)
+        )
+
+    ])
     fig.update_layout(xaxis=dict(title='Segment',tickmode='array', tickvals=mean_target_by_segment['Segment']),
-                      yaxis=dict(title='Répartition par segment', color='blue'),
-                      yaxis2=dict(title='Taux de défaut', color='red', overlaying='y', side='right'))
+                      yaxis=dict(title='Répartition par segment'),
+                      yaxis2=dict(title='Taux de défaut', color='navy', overlaying='y', side='right'))
     
     return fig
 
@@ -85,6 +125,7 @@ def show_risk_stability_overtime_2(data: pd.DataFrame, colname: str):
 
 
 
+
 #tableau
 PD = [
     [0, 0.186826, 0.003031, 0.007340, 0.197197],
@@ -98,24 +139,24 @@ PD = [
 df_PD = pd.DataFrame(PD, columns=["Segment", "LRA", "MOC A", "MOC C", "PD"])
 
 PD_revolving = [
-    [0, 0.137796, 0.006492, 0.016257, 0.160544],
-    [1, 0.079234, 0.004214, 0.009393, 0.092841],
-    [2, 0.050962, 0.002467, 0.007147, 0.060576],
-    [3, 0.037172, 0.002358, 0.006413, 0.045944],
-    [4, 0.025781, 0.002861, 0.006084, 0.034725],
-    [5, 0.016404, 0.001508, 0.004510, 0.022422],
-    [6, 0.009841, 0.001370, 0.008375, 0.019586]
+    [0, 0.137796, 0.006229, 0.016712, 0.160738],
+    [1, 0.079234, 0.004103, 0.009464, 0.092801],
+    [2, 0.050962, 0.002460, 0.007324, 0.060746],
+    [3, 0.037172, 0.002279, 0.006185, 0.045636],
+    [4, 0.025781, 0.002801, 0.006111, 0.034693],
+    [5, 0.016404, 0.001530, 0.004684, 0.022618],
+    [6, 0.009841, 0.001391, 0.008398, 0.019630]
 ]
 df_PD_revolving = pd.DataFrame(PD_revolving, columns=["Segment", "LRA", "MOC A", "MOC C", "PD"])
 
 PD_cash = [
-    [0, 0.190468, 0.002764, 0.007218, 0.200450],
-    [1, 0.131752, 0.001596, 0.004045, 0.137392],
-    [2, 0.091733, 0.001236, 0.003037, 0.096006],
-    [3, 0.062877, 0.000947, 0.002581, 0.066405],
-    [4, 0.046966, 0.000924, 0.002250, 0.050140],
-    [5, 0.031889, 0.000800, 0.002214, 0.034903],
-    [6, 0.026482, 0.001616, 0.004423, 0.032521]
+    [0, 0.190468, 0.003063, 0.007310, 0.200842],
+    [1, 0.131752, 0.001502, 0.004198, 0.137451],
+    [2, 0.091733, 0.001193, 0.003043, 0.095969],
+    [3, 0.062877, 0.000923, 0.002378, 0.066178],
+    [4, 0.046966, 0.000880, 0.002266, 0.050113],
+    [5, 0.031889, 0.000802, 0.002303, 0.034994],
+    [6, 0.026482, 0.001591, 0.004334, 0.032407]
 ]
 df_PD_cash = pd.DataFrame(PD_cash, columns=["Segment", "LRA", "MOC A", "MOC C", "PD"])
 
@@ -132,20 +173,45 @@ layout = html.Div([
 
     html.Div([
         html.H2(children='Graphiques de répartition et de taux de défaut par CHR', style={'textAlign': 'center'}),
-        dcc.Graph(figure=subplot_segment_default_rate(data_train), id='subplot_graph', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
-        dcc.Graph(figure=subplot_segment_default_rate(data_test), id='subplot_graph2', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
-        dcc.Graph(figure=subplot_segment_default_rate(data_seg_2020), id='subplot_graph3', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
-    ], style={'textAlign': 'center', 'margin-bottom': '20px'}),  
-
+        html.Div([
+            html.Div([
+                html.H3("Les données d'entraînement", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                dcc.Graph(figure=subplot_segment_default_rate(data_train), id='subplot_graph', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
+            ], style={'textAlign': 'center'}),
+        ], style={'width': '50%', 'display': 'inline-block'}),
+        html.Div([
+            html.Div([
+                html.H3("Les données de test", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                dcc.Graph(figure=subplot_segment_default_rate(data_test), id='subplot_graph2', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
+            ], style={'textAlign': 'center'}),
+        ], style={'width': '50%', 'display': 'inline-block'}),
+        html.Div([
+            html.H3("Les données d'entraînement", style={'marginBottom': '2px', 'fontSize': '16px'}),
+            dcc.Graph(figure=subplot_segment_default_rate(data_seg_2020), id='subplot_graph3', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
+        ], style={'width': '50%', 'display': 'inline-block'}),
+    ], style={'textAlign': 'center', 'margin-bottom': '20px'}),
 
     html.Div([
         html.H2(children='Graphiques de stabilité du risque au fil du temps', style={'textAlign': 'center'}),
-        dcc.Graph(figure=show_risk_stability_overtime(data_train, "Segment"), id='second_graph', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
-        dcc.Graph(figure=show_risk_stability_overtime(data_test, "Segment"), id='second_graph2', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
-        dcc.Graph(figure=show_risk_stability_overtime_2(data_seg_2020, "Segment"), id='second_graph3', style={'width': '50%', 'display': 'inline-block', 'backgroundColor': 'lightgrey'}),
-    ], style={'textAlign': 'center', 'margin-bottom': '20px'}), 
-
-
+        html.Div([
+            html.Div([
+                html.H3("Les données d'entraînement", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                dcc.Graph(figure=show_risk_stability_overtime(data_train, "Segment"), id='second_graph', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
+            ], style={'textAlign': 'center'}),
+        ], style={'width': '50%', 'display': 'inline-block'}),
+        html.Div([
+            html.Div([
+                html.H3("Les données de test", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                dcc.Graph(figure=show_risk_stability_overtime(data_test, "Segment"), id='second_graph2', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
+            ], style={'textAlign': 'center'}),
+        ], style={'width': '50%', 'display': 'inline-block'}),
+        html.Div([
+            html.Div([
+                html.H3("Les données d'entraînement", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                dcc.Graph(figure=show_risk_stability_overtime_2(data_seg_2020, "Segment"), id='second_graph3', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
+            ], style={'textAlign': 'center'}),
+        ], style={'width': '50%', 'display': 'inline-block'}),
+    ], style={'textAlign': 'center', 'margin-bottom': '20px'}),
 
     html.Div([
         html.H2(children='Probabilité de défaut', style={'textAlign': 'center'}),
