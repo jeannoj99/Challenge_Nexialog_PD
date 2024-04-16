@@ -63,7 +63,7 @@ html.Div([
             dmc.Tooltip(
                 dmc.Avatar(
                     src="https://media.licdn.com/dms/image/D4E03AQEnsX3GCq2m-Q/profile-displayphoto-shrink_800_800/0/1695562539243?e=1718236800&v=beta&t=5vKndKk0rwOoIY11teaMh0Ef1NO3bXdEtEfe8gnJnqc",
-                    size="lg",
+                    size=150,
                     radius="xl",
                 ),
                 label="Cécile HUANG",
@@ -80,7 +80,7 @@ html.Div([
             dmc.Tooltip(
                 dmc.Avatar(
                     src="https://media.licdn.com/dms/image/D4E03AQG9ya945acRxw/profile-displayphoto-shrink_800_800/0/1700774257624?e=1718236800&v=beta&t=mAckE_Vxw0RrqBG56T6rJ1EkQrpEYrGqNWXphf0F_lg",
-                    size="lg",
+                    size=150,
                     radius="xl",
                 ),
                 label="Yoan JSEM",
@@ -96,7 +96,7 @@ html.Div([
             dmc.Tooltip(
                 dmc.Avatar(
                     src="https://media.licdn.com/dms/image/D5603AQE_h5V9DB5Dag/profile-displayphoto-shrink_800_800/0/1694464803267?e=1718841600&v=beta&t=vnr3Nf-CrDcer-rERwUmETYH9s0PiT5bTN0H9LFXtcc",
-                    size="lg",
+                    size=150,
                     radius="xl",
                 ),
                 label="Jynaldo JEANNOT  ",
@@ -112,7 +112,7 @@ html.Div([
             dmc.Tooltip(
                 dmc.Avatar(
                     src="https://media.licdn.com/dms/image/D4E03AQHtWufhFZkwlQ/profile-displayphoto-shrink_800_800/0/1665177569585?e=1718841600&v=beta&t=ZrcTU9iwhyJMtikbsfPly-RBhLrF_cL97QZyTQKZUZo",
-                    size="lg",
+                    size=150,
                     radius="xl",
                 ),
                 label="Alice LIU",

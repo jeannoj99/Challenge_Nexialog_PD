@@ -42,7 +42,7 @@ displayed_label={
 def create_categorical_dropdown(id, label):
     return dmc.Select(
         id=id,
-        label=dmc.Badge(f"{label}", variant="outline"),
+        label=dmc.Badge(f"{displayed_label[label]}", variant="outline"),
         data=[{'value': i, 'label': i} for i in df[label].unique().tolist()],
         value=df[label].unique()[0],
         style={"width": 250, "height": 60}
@@ -52,7 +52,7 @@ def create_categorical_dropdown(id, label):
 def create_numeric_input(id, label):
     return dmc.NumberInput(
         id=id,
-        label=dmc.Badge(f"{label}", variant="outline"),
+        label=dmc.Badge(f"{displayed_label[label]}", variant="outline"),
         value=1,
         style={"width": 250, "height": 60}
     )
@@ -61,7 +61,7 @@ def create_numeric_input(id, label):
 def create_date_input(id,label):
     return dmc.DatePicker(
         id=id,
-            label=dmc.Badge(f"{label}",variant="outline"),
+            label=dmc.Badge(f"{displayed_label[label]}", variant="outline"),
             # description="You can also provide a description",
             # minDate=date(2020, 8, 5),
             value=datetime.now().date(),
@@ -134,7 +134,7 @@ layout = html.Div(
 
             ,
 
-            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="100"
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="200"
         ) ,
 
 
