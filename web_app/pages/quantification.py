@@ -7,6 +7,7 @@ from jenkspy import JenksNaturalBreaks
 import plotly.express as px
 from dash import dash_table
 import plotly.graph_objects as go
+import dash_mantine_components as dmc
 
 
 data_test = pd.read_csv("../data/data_seg_test.csv")
@@ -21,6 +22,17 @@ data_train_revolving= pd.read_csv("../data/data_seg_train_revolving.csv")
 data_seg_2020= pd.read_csv("../data/data_seg_2020.csv")
 data_seg_revolving_2020= pd.read_csv("../data/data_seg_revolving_2020.csv")
 data_seg_cash_2020= pd.read_csv("../data/data_seg_cash_2020.csv")
+
+border_color = "#8C8C8C"
+
+style = {
+    #"height": 100,
+    "border": f"1px solid {border_color}",
+    "marginTop": 20,
+    #"marginBottom": 20,
+    "borderRadius": 10,  # Arrondir les bordures
+    "backgroundColor": "white",  # Fond blanc
+}
 
 
 def subplot_segment_default_rate(data):
@@ -94,6 +106,7 @@ def subplot_segment_default_rate(data):
         )
 
     ])
+
     fig.update_layout(xaxis=dict(title='Segment',tickmode='array', tickvals=mean_target_by_segment['Segment']),
                       yaxis=dict(title='Répartition par segment'),
                       yaxis2=dict(title='Taux de défaut', color='navy', overlaying='y', side='right'))
@@ -125,16 +138,15 @@ def show_risk_stability_overtime_2(data: pd.DataFrame, colname: str):
 
 
 
-
 #tableau
 PD = [
-    [0, 0.186826, 0.003031, 0.007340, 0.197197],
-    [1, 0.126575, 0.001476, 0.003896, 0.131947],
-    [2, 0.086883, 0.001023, 0.002799, 0.090705],
-    [3, 0.064165, 0.000915, 0.002260, 0.067341],
-    [4, 0.044405, 0.000757, 0.002021, 0.047184],
-    [5, 0.033370, 0.000793, 0.002392, 0.036554],
-    [6, 0.025495, 0.001377, 0.003908, 0.030779]
+    [0, 0.185832, 0.003705, 0.006443, 0.195980],
+    [1, 0.125972, 0.001937, 0.003356, 0.131266],
+    [2, 0.087642, 0.001534, 0.002675, 0.091851],
+    [3, 0.061047, 0.001256, 0.002277, 0.064580],
+    [4, 0.045436, 0.001090, 0.001938, 0.048465],
+    [5, 0.030751, 0.001162, 0.002041, 0.033954],
+    [6, 0.024824, 0.001946, 0.003842, 0.030611]
 ]
 df_PD = pd.DataFrame(PD, columns=["Segment", "LRA", "MOC A", "MOC C", "PD"])
 
@@ -160,6 +172,8 @@ PD_cash = [
 ]
 df_PD_cash = pd.DataFrame(PD_cash, columns=["Segment", "LRA", "MOC A", "MOC C", "PD"])
 
+
+
 layout = html.Div([
     dcc.Dropdown(
         id='contract-type-dropdown',
@@ -171,58 +185,128 @@ layout = html.Div([
         value='all_contracts'
     ),
 
-    html.Div([
+        dmc.Container(
+
+        [
+            html.Div([
         html.H2(children='Graphiques de répartition et de taux de défaut par CHR', style={'textAlign': 'center'}),
         html.Div([
             html.Div([
-                html.H3("Les données d'entraînement", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                html.H3("Les données d'entraînement", style={'fontSize': '16px'}),
                 dcc.Graph(figure=subplot_segment_default_rate(data_train), id='subplot_graph', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
             ], style={'textAlign': 'center'}),
         ], style={'width': '50%', 'display': 'inline-block'}),
         html.Div([
             html.Div([
-                html.H3("Les données de test", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                html.H3("Les données de test", style={'fontSize': '16px'}),
                 dcc.Graph(figure=subplot_segment_default_rate(data_test), id='subplot_graph2', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
             ], style={'textAlign': 'center'}),
         ], style={'width': '50%', 'display': 'inline-block'}),
         html.Div([
-            html.H3("Les données d'entraînement", style={'marginBottom': '2px', 'fontSize': '16px'}),
+            html.H3("Les données de 2020", style={'fontSize': '16px'}),
             dcc.Graph(figure=subplot_segment_default_rate(data_seg_2020), id='subplot_graph3', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
-        ], style={'width': '50%', 'display': 'inline-block'}),
+        ], style={'width': '80%', 'display': 'inline-block'}),
     ], style={'textAlign': 'center', 'margin-bottom': '20px'}),
+   
+        ],
+        
+        style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="100"
 
-    html.Div([
+        ),
+ 
+    dmc.Container(
+        [
+
+        html.Div([
         html.H2(children='Graphiques de stabilité du risque au fil du temps', style={'textAlign': 'center'}),
         html.Div([
             html.Div([
-                html.H3("Les données d'entraînement", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                html.H3("Les données d'entraînement", style={'fontSize': '16px'}),
                 dcc.Graph(figure=show_risk_stability_overtime(data_train, "Segment"), id='second_graph', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
             ], style={'textAlign': 'center'}),
         ], style={'width': '50%', 'display': 'inline-block'}),
         html.Div([
             html.Div([
-                html.H3("Les données de test", style={'marginBottom': '2px', 'fontSize': '16px'}),
+                html.H3("Les données de test", style={'fontSize': '16px'}),
                 dcc.Graph(figure=show_risk_stability_overtime(data_test, "Segment"), id='second_graph2', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
             ], style={'textAlign': 'center'}),
         ], style={'width': '50%', 'display': 'inline-block'}),
         html.Div([
             html.Div([
-                html.H3("Les données d'entraînement", style={'marginBottom': '2px', 'fontSize': '16px'}),
                 dcc.Graph(figure=show_risk_stability_overtime_2(data_seg_2020, "Segment"), id='second_graph3', style={'width': '100%', 'backgroundColor': 'lightgrey'}, config={'displayModeBar': False}),
             ], style={'textAlign': 'center'}),
-        ], style={'width': '50%', 'display': 'inline-block'}),
-    ], style={'textAlign': 'center', 'margin-bottom': '20px'}),
+        ], style={'width': '80%', 'display': 'inline-block'}),
+    ], style={'textAlign': 'center', 'margin-bottom': '20px'}), 
 
+        ],
+
+        style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="100"
+    ),
+
+    dmc.Container(
+
+        [
+            html.Div([
+            dmc.Title('Probabilité de défaut', order = 2, style={'textAlign': 'center'}),
+               html.Div([
+    # Première moitié
     html.Div([
-        html.H2(children='Probabilité de défaut', style={'textAlign': 'center'}),
-        dash_table.DataTable(
+        dmc.HoverCard( withArrow=True, width=200, shadow="md",
+            children=[ dmc.HoverCardTarget(dmc.Button("Objectifs des MOC")),
+            dmc.HoverCardDropdown(
+            dcc.Markdown(
+                "La MOC C mesure l'erreur d'estimation réalisée par notre modèle.  \n"
+                "La MOC A mesure les erreurs liées aux données.",
+                style={"fontSize": "14px"}
+            )
+        ),
+    ],
+),
+
+        html.Br() , html.Br(), html.Br(), html.Br(),
+
+dmc.HoverCard( withArrow=True, width=800, shadow="md",
+            children=[ dmc.HoverCardTarget(dmc.Button("Méthodologie des MOC")),
+            dmc.HoverCardDropdown(
+            dcc.Markdown(
+                "Pour la MOC C : on calcule le 90e centile et la moyenne des taux de défaut obtenus à partir de 5000 échantillons bootstrap.  \n"
+                "La MOC C est calculée en prenant la différence entre le 90e centile et la moyenne des taux de défaut.  \n"
+                "Pour la MOC A : on calcule l'ajustement qui représente la différence entre la moyenne du taux de défaut pour les années avant 2019 et la moyenne totale du taux de défaut pour chaque échantillon bootstrap.  \n"
+                "La MOC A est calculée en prenant la différence entre le 90e centile et la moyenne des ajustements.",
+                style={"fontSize": "14px"}
+            )
+        ),
+    ],
+),
+    ], style={'width': '10%', 'float': 'left'}),  # Définit la largeur à 20% et aligne à gauche
+
+    # Deuxième moitié
+    html.Div([
+       dash_table.DataTable(
             id='table',
             columns=[{"name": i, "id": i} for i in df_PD.columns],
             data=df_PD.to_dict('records'),
-            style_table={'width': '80%', 'margin': 'auto'}
-        )
-    ], style={'textAlign': 'center'})
+            style_table={'width': '90%', 'margin': 'auto'}),
+    ], style={'width': '80%', 'float': 'right'}),  # Définit la largeur à 80% et aligne à gauche
+], style={'width': '100%', 'overflow': 'hidden'})  # Assure que la div parente englobe les deux moitiés
+
+            ], style={'textAlign': 'center'}),
+
+        html.Br(),
+
+        ] ,
+
+        style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="100"
+
+    ),
+
+
+
+    
 ], style={'padding': 10})
+
+
+
 
 @callback(
     [Output('subplot_graph', 'figure'),
