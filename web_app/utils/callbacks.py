@@ -1,5 +1,5 @@
 # contient toutes les fonctions callbacks utilisées
-from dash import Dash, html, dcc,Input, Output, callback
+from dash import Dash, html, dcc,Input, Output, callback, State , dash_table, MATCH, ALL, ctx
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -8,7 +8,7 @@ from utils.preprocessing import data_for_binary, data_for_lc, data_for_hc_nd, da
 from utils.preprocessing import low_category_non_stable_vars
 from utils.preprocessing import hc_vars_for_app_nd, hc_vars_for_app_d
 from utils.utils import cramers_v, mannwhitney_test, calculate_information_value, calculate_chi_stat
-
+import dash_mantine_components as dmc
 # variables binaires (b)
 @callback(
     Output('b_graph_risk_stability_overtime', 'figure'),
@@ -33,17 +33,19 @@ def binary_risk_info(binary_col):
     summary = ""
     binary_risk_non_stable_vars=["FLAG_MOBIL", "FLAG_CONT_MOBILE", "FLAG_EMAIL", "REG_REGION_NOT_LIVE_REGION", "REG_REGION_NOT_WORK_REGION","LIVE_REGION_NOT_WORK_REGION"]
     if binary_col in binary_risk_non_stable_vars:
-        summary+= f"{binary_col} est Non Stable en Risque !"
+        summary+= f"{binary_col} est non stable en risque"
     else:
-        summary+= f"{binary_col} est Stable en Risque !"
-    return summary
+        summary+= f"{binary_col} est stable en risque"
+    # return summary
+    return dmc.Alert(summary, title="Informations supplémentaires")
 
 @callback(
     Output('binary_vol_info', 'children'),
     Input('binary_col', 'value')
 )
 def binary_vol_info(binary_col): # toutes les binaires sont stables en volume
-    return f"{binary_col} est stable en volume !"
+    # return f"{binary_col} est stable en volume !"
+    return dmc.Alert(f"{binary_col} est stable en volume", title="Informations supplémentaires")
 
 
 # variables catégorielles faibles moda (lc)
@@ -68,9 +70,9 @@ def lc_volume_stability_graph(colname):
 )
 def lc_stability_info(lc_col):
     if lc_col in low_category_non_stable_vars:
-        return f"{lc_col} est Non Stable en Risque/Volume !"
+        return dmc.Alert(f"{lc_col} est non stable en risque/volume", title="Informations supplémentaires")
     else:
-        return f"{lc_col} est Stable en Risque/Volume !"
+        return dmc.Alert(f"{lc_col} est stable en risque/volume", title="Informations supplémentaires")
     
 # variables catégo a haute modalité (hc)
 
@@ -104,6 +106,7 @@ def hc_volume_stability_graph(selected_variable, checked):
     else:
         return show_volume_stability_overtime(data_for_hc_nd, selected_variable)
 
+# infos HC
 @callback(
     Output("hc_stability_info", "children"),
     [Input("dropdown_var_choice", "value"), Input("checkbox_discretized_choice", "checked")]
@@ -155,3 +158,87 @@ def hc_iv(colname,checked):
     else:
         return calculate_information_value(data_for_hc_nd, colname) 
     
+
+#### test ####
+@callback(
+    Output("all_info", "children"),
+    [Input("dropdown_var_choice", "value"), Input("checkbox_discretized_choice", "checked")]
+)
+def all_info_hc(colname,checked) :
+    if checked:
+        return dmc.Alert("faudra écrire une décision là. Est-ce stable en volume/risque ? \n test",
+                #{calculate_chi_stat(data_for_hc_d_train, colname)}, 
+                title="Informations supplémentaires")
+    else:
+        return dmc.Alert(["faudra écrire une décision ici. Est-ce stable en volume/risque ?",
+                calculate_chi_stat(data_for_hc_nd, colname)], title="Informations supplémentaires")
+
+### test ####
+    
+# Jynaldo
+from models.callable import DecisionExpertSystem
+
+fields = ["NAME_CONTRACT_TYPE","OCCUPATION_TYPE", "NAME_EDUCATION_TYPE" ,"CODE_GENDER", "CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT", "AMT_CREDIT",
+          "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","DAYS_LAST_PHONE_CHANGE"]
+
+# Liste des variables catégorielles et numériques
+categorical_vars = ["NAME_CONTRACT_TYPE", "OCCUPATION_TYPE", "NAME_EDUCATION_TYPE","CODE_GENDER"]
+numeric_vars = ["CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT", "AMT_CREDIT",
+                "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","DAYS_LAST_PHONE_CHANGE"]
+
+
+@callback(
+        Output('decision', 'children'),
+        Output('decision','style'),
+        Output('dropdown-NAME_CONTRACT_TYPE', 'value'),
+        Output('dropdown-OCCUPATION_TYPE', 'value'),
+        Output('dropdown-NAME_EDUCATION_TYPE', 'value'),
+        Output('dropdown-CODE_GENDER', 'value'),
+        Output('input-CB_NB_CREDIT_CLOSED', 'value'),
+        Output('input-CB_DAYS_CREDIT', 'value'),
+        Output('input-AMT_CREDIT', 'value'),
+        Output('input-CB_AMT_CREDIT_SUM', 'value'),
+        Output('input-AMT_INCOME_TOTAL', 'value'),
+        Output('input-AMT_GOODS_PRICE', 'value'),
+        Output('input-DAYS_BIRTH', 'value'),
+        Output('input-DAYS_EMPLOYED', 'value'),
+        Output('input-DAYS_REGISTRATION', 'value'),
+        Output('input-DAYS_LAST_PHONE_CHANGE', 'value'),
+        Input('submit-button', 'n_clicks'),
+        
+        State('dropdown-NAME_CONTRACT_TYPE', 'value'),
+        State('dropdown-OCCUPATION_TYPE', 'value'),
+        State('dropdown-NAME_EDUCATION_TYPE', 'value'),
+        State('dropdown-CODE_GENDER', 'value'),
+        State('input-CB_NB_CREDIT_CLOSED', 'value'),
+        State('input-CB_DAYS_CREDIT', 'value'),
+        State('input-AMT_CREDIT', 'value'),
+        State('input-CB_AMT_CREDIT_SUM', 'value'),
+        State('input-AMT_INCOME_TOTAL', 'value'),
+        State('input-AMT_GOODS_PRICE', 'value'),
+        State('input-DAYS_BIRTH', 'value'),
+        State('input-DAYS_EMPLOYED', 'value'),
+        State('input-DAYS_REGISTRATION', 'value'),
+        State('input-DAYS_LAST_PHONE_CHANGE', 'value'),
+        prevent_initial_call=True
+)
+def update_decision_output(n_clicks, *values):
+    if ctx.triggered_id == 'submit-button':
+        field_values = {}
+        # Ajout des valeurs des dropdowns pour les variables catégorielles
+        for i, field in enumerate(categorical_vars):
+            field_values[field] = values[i]
+
+        # Ajout des valeurs des champs de saisie numérique pour les variables numériques
+        for i, field in enumerate(numeric_vars):
+            field_values[field] = values[i + len(categorical_vars)]
+        
+        data = DecisionExpertSystem(field_values)
+        data.transform_columns()
+        data.score()
+        decision, decision_color = data.get_decision()
+        
+        # Mise à jour du style de l'élément 'decision' avec la couleur obtenue
+        decision_style = {'textAlign': 'center', 'padding': '20px', 'backgroundColor': decision_color}
+        
+        return decision, decision_style, *values
