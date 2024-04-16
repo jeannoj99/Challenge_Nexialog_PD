@@ -8,8 +8,8 @@ import plotly.express as px
 from utils.preprocessing import binary_vars_for_app, lc_vars_for_app, catego_a_utiliser
 # from utils.callbacks import hc_iv, hc_mann_whitney,hc_cramers_v, hc_chi_stat,hc_stability_info
 from utils.callbacks import display_switch_var_discr, risk_stability_graph, volume_stability_graph
-from utils.callbacks import recup_var_1, recup_var_2
-from utils.callbacks import choix_var_2_ou_target, choix_var_1, compute_stats
+#from utils.callbacks import update_selected_var_2,update_selected_var_1
+from utils.callbacks import update_variable_choices, compute_stats
 
 border_color = "#8C8C8C"
 
@@ -88,8 +88,6 @@ layout = html.Div(
                 html.Div(id='var_1_compare'),
                 html.Div(id='var_2_compare'),
                 html.Div(id='stats_display'),
-                html.Div(id='valeur_var_1'),
-                html.Div(id='valeur_var_2')
     
             ])
             ]),

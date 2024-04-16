@@ -66,84 +66,73 @@ def volume_stability_graph(colname,checked):
 # Comparateur de variables
 
 @callback(
-    Output('choice_var_2', 'children'),
-    [Input('target_selected_checkbox', 'checked'), Input('catego_ou_numerique','value')]
+    [Output('choice_var_1', 'children'),
+     Output('choice_var_2', 'children')],
+    [Input('catego_ou_numerique', 'value'),
+     Input('target_selected_checkbox', 'checked')]
 )
-def choix_var_2_ou_target(checked_target, cat_or_num):
+def update_variable_choices(cat_or_num, target_checked):
+    options_numerical = [{'label': i, 'value': i} for i in sorted(list(set(discretised_cols + tested_numerical_variables)))]
+    options_categorical = [{'label': i, 'value': i} for i in sorted(list(set(catego_a_utiliser + discretised_cols)))]
+
+    select_1 = dmc.Select(
+        id='var_1_compare',
+        data=options_numerical if cat_or_num == 'numerical' else options_categorical,
+        value=None,
+        label='Select a 1st variable'
+    )
+
+    select_2 = dmc.Select(
+        id='var_2_compare',
+        data=options_numerical if cat_or_num == 'numerical' else options_categorical,
+        value=None,
+        label='Select a 2nd variable',
+        disabled=target_checked
+    )
+
+    if target_checked:
+        select_2 = dmc.Select(
+            id='var_2_compare',
+            data=[{'label': 'TARGET', 'value': 'TARGET'}],
+            value='TARGET',
+            disabled=True
+        )
+    
+    return select_1, select_2
+
+
+@callback(
+    Output('stats_display', 'children'),
+    [Input('var_1_compare', 'value'),
+     Input('var_2_compare', 'value'),
+     Input('catego_ou_numerique', 'value'),
+     Input('target_selected_checkbox', 'checked')]
+)
+def compute_stats(var1, var2, cat_or_num, checked_target):
     if checked_target:
-        return dmc.Select(id='var_2_compare', data=[{'label': 'TARGET', 'value': 'TARGET'}],value='TARGET', disabled=True)
-    elif cat_or_num== 'numerical':
-        return dmc.Select(
-            id='var_2_compare',
-            data=[{'label': i, 'value': i} for i in sorted(list(set(discretised_cols+tested_numerical_variables)))] ,
-            value=None,
-            label='Select a 2nd variable'
-        )
-    elif cat_or_num=='categorical':
-        return dmc.Select(
-            id='var_2_compare',
-            data=[{'label': i, 'value': i} for i in sorted(list(set(catego_a_utiliser + discretised_cols)))] ,
-            value=None,
-            label='Select a 2nd variable'
-        )
-
-
-@callback(
-    Output('choice_var_1', 'children'),
-    Input('catego_ou_numerique','value')
-)
-def choix_var_1(cat_or_num):
-    if cat_or_num== 'numerical':
-        return dmc.Select(
-            id='var_1_compare',
-            data=[{'label': i, 'value': i} for i in sorted(list(set(discretised_cols+tested_numerical_variables)))] ,
-            value=None,
-            label='Select a 1st variable'
-        )
-    elif cat_or_num=='categorical':
-        return dmc.Select(
-            id='var_1_compare',
-            data=[{'label': i, 'value': i} for i in sorted(list(set(catego_a_utiliser + discretised_cols)))] ,
-            value=None,
-            label='Select a 1st variable')
-
-@callback(Output('valeur_var_1','value'),
-          Input('choice_var_1','children')
-          )
-def recup_var_1(choix):
-    return choix
-
-@callback(Output('valeur_var_2','value'),
-          Input('choice_var_2','children'))
-def recup_var_2(choix):
-    print(choix)
-    return choix
-
-@callback(
-        Output('stats_display','value'),
-        [Input('valeur_var_1','value'),Input('valeur_var_2','value'),
-         Input('catego_ou_numerique','checked'), Input('target_selected_checkbox', 'checked')]
-)
-def compute_stats(col1, col2, cat_or_num, checked_target):
-    if checked_target and cat_or_num == 'categorical': # chi2, Cramer, IV
-        chi= calculate_chi_stat_target(data_for_hc_nd, col1)
-        iv = calculate_information_value(data_for_hc_d_train, col1)
-        cramer= cramers_v_target(data_for_hc_d_train, col1)
-        return chi + cramer + iv
-    
-    elif checked_target and cat_or_num =='numerical': # Kruskal test
-        print("oui")
-        return "oui"
-        #return kruskal_wallis_test(data_for_hc_nd,col1)
-    
-    elif cat_or_num =='numerical': # Corr Pearson
-        correlation = data_for_hc_nd[[col1,col2]].corr().values[0,1]
-        return f"Corrélation entre {col1} et {col2} est de : {correlation}"
-
-    elif cat_or_num=='categorical': # Chi2, Cramer
-        chi = calculate_chi_stat_cols(data_for_hc_d_train,col1,col2)
-        cramer = cramers_v_cols(data_for_hc_d_train,col1,col2)
-        return chi + cramer
+        if cat_or_num == 'categorical': # catego ~Y 
+            chi = calculate_chi_stat_target(data_for_hc_nd, var1)
+            iv = calculate_information_value(data_for_hc_d_train, var1)
+            cramer = cramers_v_target(data_for_hc_d_train, var1)
+            return html.Div([
+                html.P(f"Chi-Square: {chi}"),
+                html.P(f"Information Value: {iv}"),
+                html.P(f"Cramer's V: {cramer}")
+            ])
+        elif cat_or_num == 'numerical': # numérique ~Y 
+            kruskal_result = kruskal_wallis_test(data_for_hc_nd, var1)
+            return html.P(f"Kruskal-Wallis Test Result: {kruskal_result}")
+    else:
+        if cat_or_num == 'numerical': # num ~num
+            correlation = data_for_hc_nd[[var1, var2]].corr().iloc[0, 1]
+            return html.P(f"Corrélation entre {var1} et {var2} est de : {correlation}")
+        elif cat_or_num == 'categorical': # cat ~ cat
+            chi = calculate_chi_stat_cols(data_for_hc_d_train, var1, var2)
+            cramer = cramers_v_cols(data_for_hc_d_train, var1, var2)
+            return html.Div([
+                html.P(f"Chi-Square: {chi}"),
+                html.P(f"Cramer's V: {cramer}")
+            ])
 
 
 
