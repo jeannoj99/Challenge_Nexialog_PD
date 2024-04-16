@@ -9,11 +9,11 @@ from datetime import datetime
 
 
 fields = ["NAME_CONTRACT_TYPE","OCCUPATION_TYPE", "NAME_EDUCATION_TYPE" ,"CODE_GENDER", "CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT", "AMT_CREDIT",
-          "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","DAYS_LAST_PHONE_CHANGE"]
+          "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","DAYS_LAST_PHONE_CHANGE","NAME_FAMILY_STATUS"]
 
 # Liste des variables catégorielles et numériques
-categorical_vars = ["NAME_CONTRACT_TYPE", "OCCUPATION_TYPE", "NAME_EDUCATION_TYPE","CODE_GENDER"]
-numeric_vars = ["CB_NB_CREDIT_CLOSED", "AMT_CREDIT",
+categorical_vars = ["NAME_CONTRACT_TYPE", "OCCUPATION_TYPE", "NAME_EDUCATION_TYPE","CODE_GENDER","NAME_FAMILY_STATUS"]
+numeric_vars = ["CNT_CHILDREN", "CB_NB_CREDIT_CLOSED", "AMT_CREDIT",
                 "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", ]
 date_vars = ["DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","CB_DAYS_CREDIT", "DAYS_LAST_PHONE_CHANGE"]
 
@@ -21,11 +21,14 @@ date_vars = ["DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","CB_DAYS_CREDIT"
         Output('decision-alert', 'children'),
         Output('decision-alert', 'color'),
         Output('decision-alert', 'style'),
+        Output("decision-alert", "hide"),
         Output('dropdown-NAME_CONTRACT_TYPE', 'value'),
         Output('dropdown-OCCUPATION_TYPE', 'value'),
         Output('dropdown-NAME_EDUCATION_TYPE', 'value'),
         Output('dropdown-CODE_GENDER', 'value'),
+        Output('dropdown-NAME_FAMILY_STATUS', 'value'),
         Output('input-CB_NB_CREDIT_CLOSED', 'value'),
+        Output('input-CNT_CHILDREN', 'value'),
         Output('input-AMT_CREDIT', 'value'),
         Output('input-CB_AMT_CREDIT_SUM', 'value'),
         Output('input-AMT_INCOME_TOTAL', 'value'),
@@ -37,10 +40,13 @@ date_vars = ["DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","CB_DAYS_CREDIT"
         Output('input-DAYS_LAST_PHONE_CHANGE', 'value'),
         Input('submit-button', 'n_clicks'),
         
+        State("decision-alert", "hide"),
         State('dropdown-NAME_CONTRACT_TYPE', 'value'),
         State('dropdown-OCCUPATION_TYPE', 'value'),
         State('dropdown-NAME_EDUCATION_TYPE', 'value'),
         State('dropdown-CODE_GENDER', 'value'),
+        State('dropdown-NAME_FAMILY_STATUS', 'value'),
+        State('input-CNT_CHILDREN', 'value'),
         State('input-CB_NB_CREDIT_CLOSED', 'value'),
         State('input-AMT_CREDIT', 'value'),
         State('input-CB_AMT_CREDIT_SUM', 'value'),
@@ -53,7 +59,7 @@ date_vars = ["DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","CB_DAYS_CREDIT"
         State('input-DAYS_LAST_PHONE_CHANGE', 'value'),
         prevent_initial_call=True
 )
-def update_decision_output(n_clicks, *values):
+def update_decision_output(n_clicks, hide, *values):
     if ctx.triggered_id == 'submit-button':
         field_values = {}
         # Ajout des valeurs des dropdowns pour les variables catégorielles
@@ -75,6 +81,16 @@ def update_decision_output(n_clicks, *values):
         # Mise à jour du style de l'élément 'decision' avec la couleur obtenue
         decision_style = {'display': 'block'}
         
-        return decision, decision_color, decision_style, *values
+        if hide == True :
+            hide = False
+            
+        return  decision, decision_color, decision_style, hide, *values
     
-    
+# @callback(
+#     Output("decision-alert", "hide"),
+#     Input("submit-button", "n_clicks"),
+#     State("decision-alert", "hide"),
+#     prevent_initial_call=True,
+# )
+# def alert(n_clicks, hide):
+#     return not hide 

@@ -16,35 +16,59 @@ df=pd.read_csv("data/application_train_vf.csv",parse_dates=["date_mensuelle"], i
 # Initialisation de l'application Dash
 octroi = dash.Dash(__name__)
 
+displayed_label={
+    "NAME_CONTRACT_TYPE": "TYPE OF CONTRACT",
+    "OCCUPATION_TYPE": "OCCUPATION TYPE",
+    "NAME_EDUCATION_TYPE" : "EDUCATION LEVEL",
+    "CODE_GENDER" : "GENDER",
+    "NAME_FAMILY_STATUS" : "MARITAL STATUS",
+    
+    "CNT_CHILDREN":"NUMBER OF DEPENDENT CHILDREN",
+    "CB_NB_CREDIT_CLOSED": "NUMBER OF CLOSED CREDITS",
+    "AMT_CREDIT": "CREDIT REQUEST AMOUNT",
+    "CB_AMT_CREDIT_SUM": "TOTAL CREDIT AMOUNT FROM CB",
+    "AMT_INCOME_TOTAL": "TOTAL ANNUAL INCOME",
+    "AMT_GOODS_PRICE" : "GOODS PRICE AMOUNT",
+
+    "CB_DAYS_CREDIT": "PREVIOUS CREDIT DATE",
+    "DAYS_BIRTH": "DATE OF BIRTH",
+    "DAYS_EMPLOYED" : "ACTUAL JOB EMPLOYMENT DATE",
+    "DAYS_REGISTRATION" : "BANK ACCOUNT REGISTRATION DATE",
+    "DAYS_LAST_PHONE_CHANGE": "LAST PHONE CHANGE DATE"
+}
+
 
 # Fonction pour créer un dropdown pour les variables catégorielles
 def create_categorical_dropdown(id, label):
     return dmc.Select(
         id=id,
-        label=label,
+        label=displayed_label[label],
         data=[{'value': i, 'label': i} for i in df[label].unique().tolist()],
-        value=df[label].unique()[0]
+        value=df[label].unique()[0],
+        style={"width": 250, "height": 60}
     )
 
 # Fonction pour créer un champ de saisie numérique pour les variables numériques
 def create_numeric_input(id, label):
     return dmc.NumberInput(
         id=id,
-        label=label,
-        value=1
+        label=displayed_label[label],
+        value=1,
+        style={"width": 250, "height": 60}
     )
     
     
 def create_date_input(id,label):
     return dmc.DatePicker(
         id=id,
-            label=label,
+            label=displayed_label[label],
             # description="You can also provide a description",
             # minDate=date(2020, 8, 5),
             value=datetime.now().date(),
             maxDate=datetime.now().date(),
             inputFormat="DD-MM-YYYY",
-            style={"width": 200},
+            style={"width": 250, "height": 60},
+            
         )
     
 
@@ -56,12 +80,16 @@ layout = html.Div(
             style={'margin': '20px auto'}
         ),
         dmc.SimpleGrid(
-            cols=4,
+            cols=3,
+            spacing="lg",
             children=[
                 create_categorical_dropdown("dropdown-NAME_CONTRACT_TYPE", "NAME_CONTRACT_TYPE"),
                 create_categorical_dropdown("dropdown-OCCUPATION_TYPE", "OCCUPATION_TYPE"),
                 create_categorical_dropdown("dropdown-NAME_EDUCATION_TYPE", "NAME_EDUCATION_TYPE"),
                 create_categorical_dropdown("dropdown-CODE_GENDER", "CODE_GENDER"),
+                create_categorical_dropdown("dropdown-NAME_FAMILY_STATUS", "NAME_FAMILY_STATUS"),
+                
+                create_numeric_input("input-CNT_CHILDREN", "CNT_CHILDREN"),
                 create_numeric_input("input-CB_NB_CREDIT_CLOSED", "CB_NB_CREDIT_CLOSED"),
                 # create_numeric_input("input-CB_DAYS_CREDIT", "CB_DAYS_CREDIT"),
                 create_numeric_input("input-AMT_CREDIT", "AMT_CREDIT"),
@@ -82,9 +110,10 @@ layout = html.Div(
             style={'margin': '0 auto 20px'}
         ),
         html.Div(
-            html.Button('Submit request', id='submit-button', n_clicks=0, style={'background-color': 'blue', 'padding': '10px 20px', 'font-size': '16px'}),
+            dmc.Button('Submit request', id='submit-button', n_clicks=0, style={'background-color': 'skyblue', 'padding': '5px 15px', 'font-size': '16px'}),
             style={'text-align': 'center', 'margin': '0 auto 20px'}
         ),
+        
         dmc.Container(
             dmc.Paper(
                 dmc.Alert("Credit decision will be displayed here", id="decision-alert", color="gray", withCloseButton=True, style={'display': 'none'}),
@@ -94,14 +123,10 @@ layout = html.Div(
                 p="md",
                 style={'maxWidth': '600px', 'margin': '40px auto', 'backgroundColor': '#f0f0f0'}
             ),
-            style={'padding': '20px'}
+            style={'padding': '10px'}
         ),
-        # html.Div(
-        #     dmc.Progress(id='probability', value=55, className='progressbar', color='green', label='55%', size='xl'),
-        #     style={'margin': '0 auto 20px'}
-        # ),
         dcc.Store(id='alert-visible', data={'visible': True}),  # Stockage de l'état de visibilité
-        html.Div(id='output-container')
+        # html.Div(id='output-container')
     ],
     style={'max-width': '800px', 'margin': 'auto'}
 )
