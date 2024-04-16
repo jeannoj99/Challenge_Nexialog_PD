@@ -20,9 +20,13 @@ from dash import Input, Output, State, dcc, html
 import pages.analyse_des_variables as analyse_des_variables
 import pages.modelisation as modelisation
 import pages.quantification as quantification
+import pages.octroi as octroi
+import pages.derniere_page as derniere_page
 from dash_bootstrap_templates import ThemeSwitchAIO
 import dash_mantine_components as dmc
 import os
+from dash_iconify import DashIconify
+
 # juste des notes
 
 #BS = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
@@ -62,7 +66,7 @@ submenu_1 = [
         dbc.Row(
             [
                 dbc.Col(
-                    [html.Img(src="/assets/methodologie.png", height="20px", style={"margin-right": "5px"}), "Méthodologie"],
+                    [html.Img(src="/assets/methodologie.png", height="20px", style={"margin-right": "5px"}), html.Span("Méthodologie", style={"font-weight": "bold", "font-family": "Trebuchet MS, sans-serif"}), ],
                     width="auto",
                     style={"cursor": "pointer"}
                 ),
@@ -79,9 +83,9 @@ submenu_1 = [
     # we use the Collapse component to hide and reveal the navigation links
     dbc.Collapse(
         [
-            dbc.NavLink("Analyse des variables", href="/analyse-des-variables"),
-            dbc.NavLink("Modélisation", href="/modelisation"),
-            dbc.NavLink("Quantification des résultats", href="/quantification"),
+            dbc.NavLink("Analyse des variables", href="/analyse-des-variables", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("Modélisation", href="/modelisation", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("Quantification des résultats", href="/quantification", style={"font-family": "Trebuchet MS, sans-serif"}),
         ],
         id="submenu-1-collapse",
     ),
@@ -108,8 +112,9 @@ submenu_2 = [
     ),
     dbc.Collapse(
         [
-            dbc.NavLink("Page 2.1", href="/page-2/1"),
+            dbc.NavLink("Plateforme Risque de crédit", href="/octroi", style={"font-family": "Trebuchet MS, sans-serif"}),
             dbc.NavLink("Page 2.2", href="/page-2/2"),
+            dbc.NavLink("En savoir plus", href="/en-savoir-plus")
         ],
         id="submenu-2-collapse",
     ),
@@ -188,7 +193,7 @@ content = html.Div(id="page-content", style=CONTENT_STYLE)
 app.layout = html.Div([
     dcc.Location(id="url"), 
     sidebar, 
-    content
+    content,
     ], 
     style = {'background-color': '#F5F5F5'}
     )
@@ -231,10 +236,12 @@ def render_page_content(pathname):
         return modelisation.layout
     elif pathname == "/quantification":
         return quantification.layout
-    elif pathname == "/page-2/1":
-        return html.P("Oh cool, this is page 2.1!")
+    elif pathname == "/octroi":
+        return octroi.layout
     elif pathname == "/page-2/2":
         return html.P("No way! This is page 2.2!")
+    elif pathname == "/en-savoir-plus":
+        return derniere_page.layout
     # If the user tries to reach a different page, return a 404 message
     return html.Div(
         [
@@ -244,6 +251,7 @@ def render_page_content(pathname):
         ],
         className="p-3 bg-light rounded-3",
     )
+
 
 # Define redirect to home page when clicking on logos
 @app.callback(Output("url", "pathname"), [Input("nexialog-logo", "n_clicks"), Input("mosef-logo", "n_clicks")])
