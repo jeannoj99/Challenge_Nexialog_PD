@@ -2,7 +2,7 @@
 
 import plotly.graph_objects as go
 import pandas as pd
-from scipy.stats import mannwhitneyu ,chi2_contingency
+from scipy.stats import mannwhitneyu ,chi2_contingency, kruskal
 import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 
@@ -51,7 +51,7 @@ def convert_numeric_to_category(df: pd.DataFrame):
         else:
             pass
 
-def cramers_v(data,col):
+def cramers_v_target(data,col):
     contingency_table=pd.crosstab(data["TARGET"], data[col])
     chi2 = chi2_contingency(contingency_table)[0]
     n = contingency_table.sum().sum()
@@ -62,16 +62,27 @@ def cramers_v(data,col):
     kcorr = k - ((k-1)**2)/(n-1)
     return f"cramers V: {round(np.sqrt(phi2corr / min((kcorr-1), (rcorr-1))),3)}"
 
+def cramers_v_cols(data,col1,col2):
+    contingency_table=pd.crosstab(data[col1], data[col2])
+    chi2 = chi2_contingency(contingency_table)[0]
+    n = contingency_table.sum().sum()
+    phi2 = chi2 / n
+    r, k = contingency_table.shape
+    phi2corr = max(0, phi2 - ((k-1)*(r-1))/(n-1))
+    rcorr = r - ((r-1)**2)/(n-1)
+    kcorr = k - ((k-1)**2)/(n-1)
+    return f"cramers V: {round(np.sqrt(phi2corr / min((kcorr-1), (rcorr-1))),3)}"
 
-def mannwhitney_test(df: pd.DataFrame, variable: str):
+
+def kruskal_wallis_test(df: pd.DataFrame, variable: str):
     if df[variable].dtype not in ['int64', 'float64']: 
         return f"{variable} n'est pas numérique"
 
     group_1 = df[df["TARGET"] == 0]
     group_2 = df[df["TARGET"] == 1]
 
-    stat, p_value = mannwhitneyu(group_1[variable].dropna(), group_2[variable].dropna())
-    return f"Pour {variable}, Mann-Whitney U-Statistic: {round(stat, 3)} (p-value: {round(p_value, 3)})"
+    stat, p_value = kruskal(group_1[variable].dropna(), group_2[variable].dropna())
+    return f"Pour {variable}, Kruskal-Wallis Statistic: {round(stat, 3)} (p-value: {round(p_value, 3)})"
 
 
 def calculate_information_value(data,col):
@@ -93,8 +104,13 @@ def calculate_information_value(data,col):
 
     return f"Information value: {round(iv,4)}"
 
-def calculate_chi_stat(data,col):
+def calculate_chi_stat_target(data,col):
     contingency_table=pd.crosstab(data["TARGET"], data[col])
+    chi2, p, _, _ = chi2_contingency(contingency_table, correction=True)     
+    return f"Chi-squared: {round(chi2,2)} (p-value: {round(p,3)})"
+
+def calculate_chi_stat_cols(data,col1,col2):
+    contingency_table=pd.crosstab(data[col1], data[col2])
     chi2, p, _, _ = chi2_contingency(contingency_table, correction=True)     
     return f"Chi-squared: {round(chi2,2)} (p-value: {round(p,3)})"
 
