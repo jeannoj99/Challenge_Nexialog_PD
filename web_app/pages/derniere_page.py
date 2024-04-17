@@ -5,6 +5,7 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import plotly.figure_factory as ff
 import dash_mantine_components as dmc
+from dash_iconify import DashIconify
 
 layout = html.Div(
     [
@@ -24,38 +25,9 @@ html.Div([
     ], style={'float': 'left', 'width': '50%'}),  # Utilise 50% de la largeur de la div parente
 
     # À droite : dmc.Title
-    dmc.Title("Contact", order=3, style={'float': 'right', 'width': '50%', 'textAlign': 'center'}),
+    dmc.Title("Pour nous contacter : ", order=2, style={'float': 'right', 'width': '50%', 'textAlign': 'center'}),
 
-
-# dmc.Badge(
-#         "Cécile HUANG",
-#         leftSection=dmc.Avatar(
-#             src="https://media.licdn.com/dms/image/D4E03AQEnsX3GCq2m-Q/profile-displayphoto-shrink_800_800/0/1695562539243?e=1718236800&v=beta&t=5vKndKk0rwOoIY11teaMh0Ef1NO3bXdEtEfe8gnJnqc",
-#             size="lg",
-#             radius="xl",
-#             mr=1,
-#         ),
-#         sx={"paddingLeft": 0},
-#         size="xl",
-#         radius="xl",
-#         color="teal",
-#         # href = "https://community.plotly.com/t/dash-mantine-components/58414"
-#     ),
-
-#     dmc.Anchor(
-#     "Dash Mantine Components Announcement",
-#     href="https://community.plotly.com/t/dash-mantine-components/58414",
-# ),
-
-#     html.Br(),html.Br(),html.Br(),
-
-#     dmc.Badge("Jynaldo JEANNOT",leftSection=dmc.Avatar(src="https://media.licdn.com/dms/image/D5603AQE_h5V9DB5Dag/profile-displayphoto-shrink_200_200/0/1694464803267?e=1718236800&v=beta&t=W0hcOtpbiewCGVQeNn6hPe5bCgovBbRdkMg6kRXv-_o",    size="lg",    radius="xl",    mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="blue"),
-
-#     html.Br(),
-#     dmc.Badge("Yoan JSEM",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQG9ya945acRxw/profile-displayphoto-shrink_800_800/0/1700774257624?e=1718236800&v=beta&t=mAckE_Vxw0RrqBG56T6rJ1EkQrpEYrGqNWXphf0F_lg", size="lg", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="violet"), 
-
-#     html.Br(),
-#     dmc.Badge("Alice LIU",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQHtWufhFZkwlQ/profile-displayphoto-shrink_200_200/0/1665177569585?e=1718236800&v=beta&t=sMpohGzkNcK_Jt8eseqkxfbSzgjKat5GhYVOWkI1_PY", size="lg", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="yellow"), 
+    html.Br(), html.Br(),
 
     html.Div([
     html.Div([
@@ -123,7 +95,128 @@ html.Div([
             style={'textAlign': 'center'}
         ),
     ], style={'display': 'inline-block', 'margin-left' : '0px', 'margin-right': '30px', 'textAlign': 'center'}),
-])
+]) ,
+
+html.Br(style={'height': '2000px'}),
+
+dmc.Timeline(
+    active=6,
+    bulletSize=20,
+    lineWidth=2,
+    style={"marginLeft": "60%", "marginTop": "50px"},
+    # align = "right",
+    children=[
+        dmc.TimelineItem(
+            title=dmc.Title("Analyse des variables", order=4),
+            children=[
+                dmc.Text(
+                    [
+                        "Revoir les ",
+                        dmc.Anchor("analyses", href="/analyse-des-variables", size="sm"),
+                        
+                    ],
+                    color="dimmed",
+                    size="sm",
+                ),
+            ],
+        ),
+        dmc.TimelineItem(
+            title=dmc.Title("Modélisation", order=4),
+            children=[
+                dmc.Text(
+                    [
+                        "Comparer les ",
+                        dmc.Anchor("modèles", href="/modelisation", size="sm"),
+                    ],
+                    color="dimmed",
+                    size="sm",
+                ),
+            ],
+        ),
+        dmc.TimelineItem(
+            title=dmc.Title("Quantification des résultats",order=4),
+            children=[
+                dmc.Text(
+                    [
+                        "Revoir les ",
+                        dmc.Anchor(
+                            "résultats",
+                            href="/quantification",
+                            size="sm",
+                        ),
+                    ],
+                    color="dimmed",
+                    size="sm",
+                ),
+            ],
+        ),
+        dmc.TimelineItem(
+            title=dmc.Title("Credit Risk Platform",order=4),
+            children=[
+                dmc.Text(
+                    [
+                        "Accéder à la  ",
+                        dmc.Anchor("plateforme", href="/modelisation", size="sm"),
+                        " d'octroi"
+                    ],
+                    color="dimmed",
+                    size="sm",
+                ),
+            ],
+        ),
+        dmc.TimelineItem(
+            title=dmc.Title("Backtesting",order=4),
+            children=[
+                dmc.Text(
+                    [
+                        "Revoir le ",
+                        dmc.Anchor(
+                            "backtesting",
+                            href="#",
+                            size="sm",
+                        ),
+                    ],
+                    color="dimmed",
+                    size="sm",
+                ),
+            ],
+        ),
+        dmc.TimelineItem(
+            title=dmc.Title("Modèles de Machine Learning",order=4),
+            children=[
+                dmc.Text(
+                    [
+                        "Revoir le ",
+                        dmc.Anchor(
+                            "modèle challenger",
+                            href="#",
+                            size="sm",
+                        ),
+                    ],
+                    color="dimmed",
+                    size="sm",
+                ),
+            ],
+        ),
+        dmc.TimelineItem(
+            [ 
+                dmc.Text(
+                    [
+                        dmc.Anchor(
+                            href="#",
+                            size="sm",
+                        ),
+                        "Vous êtes bien arrivés à destination !",
+                    ],
+                    color="dimmed",
+                    size="sm",
+                ),
+            ],
+            title=dmc.Title("Merci !",order=4),
+            lineVariant="dashed"
+        ),
+    ],
+)
 
 
 
