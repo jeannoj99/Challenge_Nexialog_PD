@@ -189,7 +189,7 @@ dmc.Timeline(
                         "Revoir le ",
                         dmc.Anchor(
                             "modèle challenger",
-                            href="#",
+                            href="/ml-model",
                             size="sm",
                         ),
                     ],
