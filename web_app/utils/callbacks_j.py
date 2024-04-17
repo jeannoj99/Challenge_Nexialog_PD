@@ -246,7 +246,7 @@ def update_graph_kolmogorov_smirnov(selected_contract):
                          (datas_backtesting[selected_contract]["backtest"]).data['Note'], alternative='two-sided')
     ks_text = f"p-value={ks_result.pvalue:.3f}, statistic={ks_result.statistic:.3f}"
 
-    return fig, dmc.Alert(f"{ks_text}",title="Résultat KS-test", color="blue")
+    return fig, dmc.Alert(f"{ks_text}",title="Résultat du test de Kolmogorov Smirnov", color="blue")
 
 
 ######################################################################################################################################
