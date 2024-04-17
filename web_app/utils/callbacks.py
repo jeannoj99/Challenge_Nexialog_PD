@@ -7,7 +7,7 @@ from dash.exceptions import PreventUpdate
 import plotly.figure_factory as ff
 sys.path.append(os.getcwd())
 from models.callable import DecisionExpertSystem, Dataset, binomial_test
-from 
+from utils.utils_from_cecile import subplot_segment_default_rate, show_risk_stability_overtime, plot_feature_importances
 import pandas as pd
 import numpy as np
 from datetime import datetime
