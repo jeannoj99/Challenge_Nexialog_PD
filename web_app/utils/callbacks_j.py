@@ -210,7 +210,7 @@ def update_tables_and_tests(selected_contract, selected_feature):
     }
 )
 
-    return stability_table, ssi, gof_table
+    return stability_table, dmc.Alert(f"{ssi}", title="Indice de stabilité", color="green"), gof_table
 
 
 @callback(
@@ -244,9 +244,9 @@ def update_graph_kolmogorov_smirnov(selected_contract):
     
     ks_result = ks_2samp((datas_backtesting[selected_contract]["reference"]).data['Note'],
                          (datas_backtesting[selected_contract]["backtest"]).data['Note'], alternative='two-sided')
-    ks_text = f"KS-test result: p-value={ks_result.pvalue:.3f}, statistic={ks_result.statistic:.3f}"
+    ks_text = f"p-value={ks_result.pvalue:.3f}, statistic={ks_result.statistic:.3f}"
 
-    return fig, ks_text
+    return fig, dmc.Alert(f"{ks_text}",title="Résultat KS-test", color="blue")
 
 
 ######################################################################################################################################
