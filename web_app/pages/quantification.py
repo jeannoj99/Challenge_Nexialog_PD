@@ -8,6 +8,7 @@ import plotly.express as px
 from dash import dash_table
 import plotly.graph_objects as go
 import dash_mantine_components as dmc
+#from utils.callbacks import subplot, stab_risk
 
 
 data_test = pd.read_csv("../data/data_seg_test.csv")
@@ -255,7 +256,7 @@ layout = html.Div([
             children=[ dmc.HoverCardTarget(dmc.Button("Objectifs des MOC")),
             dmc.HoverCardDropdown(
             dcc.Markdown(
-                "La MOC C mesure l'erreur d'estimation réalisée par notre modèle.  \n"
+                "La MOC C mesure l'erreur d'estimation réalisée par notre modèle. \n"
                 "La MOC A mesure les erreurs liées aux données.",
                 style={"fontSize": "14px"}
             )
@@ -269,10 +270,7 @@ dmc.HoverCard( withArrow=True, width=800, shadow="md",
             children=[ dmc.HoverCardTarget(dmc.Button("Méthodologie des MOC")),
             dmc.HoverCardDropdown(
             dcc.Markdown(
-                "Pour la MOC C : on calcule le 90e centile et la moyenne des taux de défaut obtenus à partir de 5000 échantillons bootstrap.  \n"
-                "La MOC C est calculée en prenant la différence entre le 90e centile et la moyenne des taux de défaut.  \n"
-                "Pour la MOC A : on calcule l'ajustement qui représente la différence entre la moyenne du taux de défaut pour les années avant 2019 et la moyenne totale du taux de défaut pour chaque échantillon bootstrap.  \n"
-                "La MOC A est calculée en prenant la différence entre le 90e centile et la moyenne des ajustements.",
+                "La MOC C est calculée en prenant la différence entre le 90e centile et la moyenne des taux de défaut obtenus à partir de 5000 échantillons bootstrap. La MOC A est calculée en prenant la différence entre le 90e centile et la moyenne des ajustements, qui représente la différence entre la moyenne du taux de défaut pour les années avant 2019 et la moyenne totale du taux de défaut pour chaque segment.",
                 style={"fontSize": "14px"}
             )
         ),
