@@ -11,7 +11,7 @@ from utils.callbacks_j import update_decision_output, fields, categorical_vars, 
 # from src.preprocessing import DecisionTreeDiscretizer
 # from models.callable import Dataset, ExpertSystem
 
-df=pd.read_csv("../data/application_train_vf.csv",parse_dates=["date_mensuelle"], index_col=0)
+df=pd.read_csv("./data/application_train_vf.csv",parse_dates=["date_mensuelle"], index_col=0)
 
 # Initialisation de l'application Dash
 octroi = dash.Dash(__name__)

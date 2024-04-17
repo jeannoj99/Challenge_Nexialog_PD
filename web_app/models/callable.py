@@ -18,8 +18,8 @@ required_columns={
               "AMT_GOODS_PRICE","DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION" ]
 }
 
-cash_grid_score=pd.read_excel("../data/grille_de_score_cash.xlsx", index_col=0)
-revolving_grid_score = pd.read_excel("../data/grille_de_score_revolving.xlsx", index_col=0)
+cash_grid_score=pd.read_excel("./data/grille_de_score_cash.xlsx", index_col=0)
+revolving_grid_score = pd.read_excel("./data/grille_de_score_revolving.xlsx", index_col=0)
 
 discretizers={}
 
@@ -176,8 +176,8 @@ required_columns={
               "AMT_GOODS_PRICE","DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION" ]
 }
 
-cash_grid_score=pd.read_excel("../data/grille_de_score_cash.xlsx", index_col=0)
-revolving_grid_score = pd.read_excel("../data/grille_de_score_revolving.xlsx", index_col=0)
+cash_grid_score=pd.read_excel("./data/grille_de_score_cash.xlsx", index_col=0)
+revolving_grid_score = pd.read_excel("./data/grille_de_score_revolving.xlsx", index_col=0)
 
 discretizers={}
 
