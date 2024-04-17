@@ -21,8 +21,7 @@ data_for_hc_nd = pd.read_csv("../data/app_hc_no_disc.csv")
 
 #dataset qui a les variables discrétisées numériques
 data_for_hc_d_train = pd.read_csv("../data/app_hc_disc_train.csv")
-# TODO Supprimer (CSV) car non utilisé 
-# data_for_hc_d_test = pd.read_csv("../data/app_hc_disc_test.csv")
+data_discret = pd.read_csv("../data/app_discrete_checked.csv")
 
 catego_a_utiliser= ['FLAG_EMP_PHONE', 'OCCUPATION_TYPE', 
                     'WALLSMATERIAL_MODE', 'FLAG_WORK_PHONE',
