@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from scipy.stats import ks_2samp
+import dash_mantine_components as dmc
 
 
 features_by_contract = {
@@ -372,3 +373,57 @@ def update_risk_quantification_ml(model_choice):
     gini_display = f"Gini Score: {ginis_ml_models[model_choice]:.3f}"
 
     return  risk_fig, fig_density, segment_fig, pd_summary_data
+
+
+@callback(
+    Output("modal-centered", "opened"),
+    Input("modal-centered-button", "n_clicks"),
+    State("modal-centered", "opened"),
+    prevent_initial_call=True,
+)
+def toggle_modal(n_clicks, opened):
+    return not opened
+
+@callback(
+    Output("output-modal", "children"),  # Modifier le contenu du modal
+    Input("model-choice", "value"),  # Valeur sélectionnée dans le dropdown
+    prevent_initial_call=False
+)
+def update_modal_content(selected_value):
+    # Vous pouvez définir différentes chaînes de texte ou tout autre contenu selon les valeurs sélectionnées
+    if selected_value == 'Cash loans':
+        text = """
+Type : Extreme Gradient Boosting (XGBOOST) \n
+OverSampling : Oui \n
+params={"objective" : "binary:logistic", \n
+"n_estimators": 1919, \n
+    "max_depth": 3,
+    "learning_rate": 0.0859629599254648,
+    "subsample": 0.5551507002697985,
+    "colsample_bytree": 0.5259021305964645,
+    "gamma": 4.73594274760292,
+    "reg_alpha": 2.0479518991587744,
+    "reg_lambda": 1.6104339752926782,
+    "min_child_weight": 9.552310062227694}
+                """
+        modal_content = dmc.Text(f"{text}")
+    elif selected_value == 'Revolving loans':
+        text = """ Type : Extreme Gradient Boosting (XGBOOST)
+OverSampling : Non
+params={ 'objective' : 'binary:logistic',
+'n_estimators': 3346,
+ 'max_depth': 14,
+ 'learning_rate': 0.09682173875579893,
+ 'subsample': 0.9925031110142413,
+ 'colsample_bytree': 0.5203989753044218,
+ 'gamma': 1.6414640218829,
+ 'reg_alpha': 0.6325232901507183,
+ 'reg_lambda': 0.28657378226912456,
+ 'min_child_weight': 19.655206808761505,
+ 'random_state': 7607}
+"""
+        modal_content = dmc.Text(f"{text}")
+    else:
+        modal_content = dmc.Text("Aucun contenu spécifique sélectionné.")
+    
+    return modal_content  # Retourne le contenu du modal en tant que liste

@@ -12,7 +12,7 @@ import sys
 import os
 sys.path.append(os.getcwd()+"/..")
 from utils.utils_from_cecile import subplot_segment_default_rate, show_risk_stability_overtime, plot_feature_importances
-from utils.callbacks_j import pd_summary_ml_cash, pd_summary_ml_revolving, pd_summaries_ml, ginis_ml_models, models_challenger, datas_challenger, shap_graphs_src, update_interpretable_ml, update_risk_quantification_ml
+from utils.callbacks_j import pd_summary_ml_cash, pd_summary_ml_revolving, pd_summaries_ml, ginis_ml_models, models_challenger, datas_challenger, shap_graphs_src, update_interpretable_ml, update_risk_quantification_ml, toggle_modal
 
 
 # Define the layout of the app
@@ -27,6 +27,20 @@ layout = html.Div([
         value='Cash loans',  # Default value
         clearable=False
     ),
+    html.Br(),
+
+    html.Div(
+    [
+        dmc.Modal(
+            title="Type de modèle et paramètres utilisés",
+            id="modal-centered",
+            centered=True,
+            zIndex=10000,
+            children=[dmc.Text(id='output-modal')],
+        ),
+        dmc.Button("Détails", id="modal-centered-button"),
+    ], style={'textAlign': 'center', 'marginBottom': '10px'}
+),
 
     html.Div([
         dmc.Title("Interprétation du modèle", order=3, style={'textAlign': 'center', 'marginBottom': '10px'}),
@@ -35,6 +49,7 @@ layout = html.Div([
             html.Img(id='shap-image', src='/assets/shap_summary_plot_cash.png', style={'width': 'auto', 'height': '500'})
         ], style={'display': 'flex', 'justifyContent': 'space-around'})  # Graphs side by side
     ], style={'padding': '20px', 'border': '1px solid #ddd', 'borderRadius': '5px', 'margin': '20px'}),
+
 
     dbc.Card(
         [ dmc.Title("Evaluation du modèle sur le test", order=5, style={'textAlign': 'center', 'marginBottom': '10px'}),
@@ -45,6 +60,7 @@ layout = html.Div([
         body=True,
         style={'maxWidth': '200px', 'margin': '20px auto', 'padding': '10px','backgroundColor': 'skyblue'}
     ),
+
     html.Div([
         html.H2("Quantification du risque", style={'textAlign': 'center'}),
         html.Div([
