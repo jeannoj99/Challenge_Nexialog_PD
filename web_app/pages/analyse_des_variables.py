@@ -87,9 +87,18 @@ layout = html.Div(
                 html.Div(id='choice_var_2'),
                 html.Div(id='var_1_compare'),
                 html.Div(id='var_2_compare'),
+
+                html.Div(
+    [
+        # dmc.Checkbox(id="checkbox-simple", label="Valider", mb=10),
+        dmc.Button('Cliquer pour valider votre choix', id='submit-var-explo', n_clicks=0, style={'background-color': 'skyblue', 'padding': '5px 15px', 'font-size': '16px'}),
+        dmc.Text(id="checkbox-output"),
+    ]
+),
+
                 html.Div(id='stats_display'),
-                html.Div(id='valeur_var_1'),
-                html.Div(id='valeur_var_2'),
+                html.Div(id='valeur_var_1', style={'display':'none'}),
+                html.Div(id='valeur_var_2', style={'display':'none'}),
     
             ])
             ]),

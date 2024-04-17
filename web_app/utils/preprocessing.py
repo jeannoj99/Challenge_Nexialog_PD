@@ -18,6 +18,7 @@ hc_vars_for_app_d =['AMT_ANNUITY', 'AMT_CREDIT', 'AMT_CREDIT_NORM', 'AMT_CREDIT_
 
 # dataset qui a les variables NON DISCRETISEES NUMERIQUES
 data_for_hc_nd = pd.read_csv("../data/app_hc_no_disc.csv")
+data_discret = pd.read_csv("../data/app_discrete_checked.csv")
 
 #dataset qui a les variables discrétisées numériques
 data_for_hc_d_train = pd.read_csv("../data/app_hc_disc_train.csv")
@@ -36,7 +37,9 @@ catego_a_utiliser= ['FLAG_EMP_PHONE', 'OCCUPATION_TYPE',
 
 
 # variables numériques qui deviendront discrétisées
-discretised_cols=["AMT_INCOME_TOTAL_NORM", "AMT_CREDIT_TO_INCOME" , "BORROWER_AGE", "BORROWER_SENIORITY",
+discretised_cols=["AMT_INCOME_TOTAL_NORM", "AMT_CREDIT_TO_INCOME" , 
+                  "BORROWER_AGE", 
+                  "BORROWER_SENIORITY",
                   "BORROWER_FIDELITY", "AMT_CREDIT_NORM", "DAYS_LAST_PHONE_CHANGE",
                   "AMT_ANNUITY","AMT_GOODS_PRICE", "CB_DAYS_CREDIT",
                   'CB_AMT_CREDIT_SUM_DEBT', 'CB_NB_CREDIT_CLOSED', 
@@ -44,7 +47,8 @@ discretised_cols=["AMT_INCOME_TOTAL_NORM", "AMT_CREDIT_TO_INCOME" , "BORROWER_AG
 
 # variables numériques qui ne seront PAS discrétisées !
 tested_numerical_variables=[
-    "BORROWER_AGE","BORROWER_SENIORITY","BORROWER_FIDELITY","AMT_INCOME_TOTAL_NORM",
+    "BORROWER_AGE",
+    "BORROWER_SENIORITY","BORROWER_FIDELITY","AMT_INCOME_TOTAL_NORM",
     "AMT_CREDIT_NORM", "AMT_INCOME_TOTAL","AMT_CREDIT",
     "AMT_ANNUITY","AMT_GOODS_PRICE",
     'CB_AMT_CREDIT_SUM_DEBT', 'CB_NB_CREDIT_ACTIVE', 'CB_NB_CREDIT_CLOSED', 'CB_DAYS_CREDIT', 'CB_DAYS_CREDIT_ENDDATE', 'CB_AMT_CREDIT_SUM', 'CB_AMT_ANNUITY'

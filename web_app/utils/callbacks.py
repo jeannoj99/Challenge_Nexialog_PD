@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from utils.utils import show_risk_stability_graph, show_volume_stability_overtime
-from utils.preprocessing import data_for_binary, data_for_lc, data_for_hc_nd, data_for_hc_d_train
+from utils.preprocessing import data_for_binary, data_for_lc, data_for_hc_nd, data_for_hc_d_train, data_discret
 from utils.preprocessing import low_category_non_stable_vars
 from utils.preprocessing import binary_vars_for_app,lc_vars_for_app, hc_vars_for_app_nd, hc_vars_for_app_d
 from utils.utils import cramers_v_target,cramers_v_cols, kruskal_wallis_test, calculate_information_value, calculate_chi_stat_target,calculate_chi_stat_cols
@@ -62,12 +62,19 @@ def volume_stability_graph(colname,checked):
             return show_volume_stability_overtime(data_for_hc_nd,colname)
     else: # colname in catego_a_utiliser
         return show_volume_stability_overtime(data_for_hc_d_train,colname)
+    
+
+@callback(Output("catego_ou_numerique-value", "children"), Input("catego_ou_numerique", "value"))
+def select_value(value):
+    return value
+
 
 # Comparateur de variables
 
 @callback(
     Output('choice_var_2', 'children'),
-    [Input('target_selected_checkbox', 'checked'), Input('catego_ou_numerique','value')]
+    [Input('target_selected_checkbox', 'checked'), 
+     Input('catego_ou_numerique','value')]
 )
 def choix_var_2_ou_target(checked_target, cat_or_num):
     if checked_target:
@@ -111,52 +118,64 @@ def choix_var_1(cat_or_num):
           Input('var_1_compare','value')
           )
 def recup_var_1(choix):
-    global vrai_var1
-    vrai_var1 = choix
-    print(f"choix 1 : {choix}")
-    # return f"{choix}"
     return choix
 
 @callback(Output('valeur_var_2','children'),
           Input('var_2_compare','value'))
 def recup_var_2(choix):
-    global vrai_var2
-    vrai_var2 = choix
-    print(f"choix 2 : {choix}")
     return choix
 
+
 @callback(
-        Output('stats_display','value'),
-        [
-            # Input('valeur_var_1','value'),Input('valeur_var_2','value'),
-         Input('catego_ou_numerique','value'), Input('target_selected_checkbox', 'checked')]
+    Output("checkbox-output", "children"), 
+    Input("submit-var-explo", "n_clicks")
 )
-def compute_stats(cat_or_num, checked_target):
-    # print(col1)
-    if checked_target and cat_or_num == 'categorical': # chi2, Cramer, IV
-        chi= calculate_chi_stat_target(data_for_hc_nd, vrai_var1)
+def checkbox(n_clicks):
+    if n_clicks is None:
+        # Le bouton n'a pas encore été cliqué
+        return False
+    else:
+        # Le bouton a été cliqué au moins une fois
+        return True
+
+
+@callback(
+    Output('stats_display','children'),
+    [
+        Input('catego_ou_numerique','value'), 
+        Input('target_selected_checkbox', 'checked'),
+        Input("checkbox-output", "children")
+    ],
+    [
+        State('valeur_var_1','children'),
+        State('valeur_var_2','children')
+    ], 
+
+    prevent_initial_call=True
+)
+def compute_stats(cat_or_num, checked_target, booleen, vrai_var1, vrai_var2):
+  
+    if vrai_var1 is None or vrai_var2 is None:
+        return "Veuillez sélectionner les variables à comparer."
+
+    if checked_target == True and cat_or_num == 'categorical' and booleen == True: # chi2, Cramer, IV
+        chi= calculate_chi_stat_target(data_for_hc_d_train, vrai_var1)
         iv = calculate_information_value(data_for_hc_d_train, vrai_var1)
         cramer= cramers_v_target(data_for_hc_d_train, vrai_var1)
-        print(chi)
-        return chi + cramer + iv
-        # return "oui"
-        # return dmc.Text(f"{chi+iv+cramer}")
+        # print(chi)
+        return [chi, iv, cramer]
     
-    elif checked_target and cat_or_num =='numerical': # Kruskal test
-        # print("oui")
-        # return "oui"
-        return kruskal_wallis_test(data_for_hc_nd,vrai_var1)
+    elif checked_target and cat_or_num =='numerical' and booleen == True : # Kruskal test
+        return kruskal_wallis_test(data_discret,vrai_var1)
     
-    elif cat_or_num =='numerical': # Corr Pearson
-        correlation = data_for_hc_nd[[vrai_var1,vrai_var2]].corr().values[0,1]
+    elif cat_or_num =='numerical' and booleen == True: # Corr Pearson
+        correlation = data_discret[[vrai_var1,vrai_var2]].corr().values[0,1]
         return f"Corrélation entre {vrai_var1} et {vrai_var2} est de : {correlation}"
-        # return "oui"
     
     elif cat_or_num=='categorical': # Chi2, Cramer
         chi = calculate_chi_stat_cols(data_for_hc_d_train,vrai_var1,vrai_var2)
         cramer = cramers_v_cols(data_for_hc_d_train,vrai_var1,vrai_var2)
         return chi + cramer
-        # return "oui"
 
 
 
@@ -164,31 +183,6 @@ def compute_stats(cat_or_num, checked_target):
 
 
 
-
-
-
-
-
-
-
-
-
-
-#### test ####
-# @callback(
-#     Output("all_info", "children"),
-#     [Input("dropdown_var_choice", "value"), Input("checkbox_discretized_choice", "checked")]
-# )
-# def all_info_hc(colname,checked) :
-#     if checked:
-#         return dmc.Alert("faudra écrire une décision là. Est-ce stable en volume/risque ? \n test",
-#                 #{calculate_chi_stat(data_for_hc_d_train, colname)}, 
-#                 title="Informations supplémentaires")
-#     else:
-#         return dmc.Alert(["faudra écrire une décision ici. Est-ce stable en volume/risque ?",
-#                 calculate_chi_stat(data_for_hc_nd, colname)], title="Informations supplémentaires")
-
-### test ####
     
 # Jynaldo
 from models.callable import DecisionExpertSystem
