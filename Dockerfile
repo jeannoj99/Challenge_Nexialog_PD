@@ -14,6 +14,4 @@ EXPOSE 5150
 
 RUN python3 -m pip install -r requirements.txt
 
-WORKDIR /app/web_app
-
-CMD ["python3", "app.py"]
+CMD bash -c ". launch.sh"
