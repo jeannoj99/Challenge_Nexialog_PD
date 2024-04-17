@@ -6,23 +6,23 @@ from plotly.subplots import make_subplots
 import plotly.figure_factory as ff
 
 
-grid_score = pd.read_excel("../data/grille_de_score.xlsx",index_col=0)
+grid_score = pd.read_excel("/app/data/grille_de_score.xlsx",index_col=0)
 grid_score = grid_score.sort_values(by=['Variable', 'tx_defaut'], ascending=[True, False])
 
-grid_score_cash = pd.read_excel("../data/grille_de_score_cash.xlsx",index_col=0)
+grid_score_cash = pd.read_excel("/app/data/grille_de_score_cash.xlsx",index_col=0)
 grid_score_cash = grid_score_cash.sort_values(by=['Variable', 'tx_defaut'], ascending=[True, False])
 
-grid_score_revolving = pd.read_excel("../data/grille_de_score_revolving.xlsx",index_col=0)
+grid_score_revolving = pd.read_excel("/app/data/grille_de_score_revolving.xlsx",index_col=0)
 grid_score_revolving = grid_score_revolving.sort_values(by=['Variable', 'tx_defaut'], ascending=[True, False])
 
-data_train = pd.read_csv("../data/data_train_all.csv",sep=',')
-data_test = pd.read_csv("../data/data_test_all.csv",sep=',')
+data_train = pd.read_csv("/app/data/data_train_all.csv",sep=',')
+data_test = pd.read_csv("/app/data/data_test_all.csv",sep=',')
 
-data_train_cash = pd.read_csv("../data/data_train_notes_target_cash.csv",sep=',')
-data_test_cash = pd.read_csv("../data/data_test_notes_target_cash.csv",sep=',')
+data_train_cash = pd.read_csv("/app/data/data_train_notes_target_cash.csv",sep=',')
+data_test_cash = pd.read_csv("/app/data/data_test_notes_target_cash.csv",sep=',')
 
-data_train_revolving = pd.read_csv("../data/data_train_notes_target_revolving.csv",sep=',')
-data_test_revolving = pd.read_csv("../data/data_test_notes_target_revolving.csv",sep=',')
+data_train_revolving = pd.read_csv("/app/data/data_train_notes_target_revolving.csv",sep=',')
+data_test_revolving = pd.read_csv("/app/data/data_test_notes_target_revolving.csv",sep=',')
 
 logit_results = [
     ["OCCUPATION_TYPE", "Treatment(reference=0)[0]", -0.9269, 0.059, -15.723, 0.000, "-1.042, -0.811"],

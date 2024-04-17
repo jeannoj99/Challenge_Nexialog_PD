@@ -5,7 +5,7 @@ import os
 from dash import Dash, html, dcc,Input, Output, State, callback, dash_table, MATCH, ALL, ctx, no_update
 from dash.exceptions import PreventUpdate
 import plotly.figure_factory as ff
-sys.path.append(os.getcwd()+"/..")
+sys.path.append(os.getcwd()+"//app")
 from models.callable import DecisionExpertSystem, Dataset, binomial_test
 import pandas as pd
 import numpy as np
@@ -99,8 +99,8 @@ def update_decision_output(n_clicks, hide, *values):
 #######################################################################################################################################
 ############################################################### BACKTESTING ###########################################################
 
-data=pd.read_csv("../data/application_train_vf.csv",parse_dates=["date_mensuelle"], index_col=0)
-credit_bureau_data=pd.read_csv("../data/cb_findings.csv", index_col=0)
+data=pd.read_csv("/app/data/application_train_vf.csv",parse_dates=["date_mensuelle"], index_col=0)
+credit_bureau_data=pd.read_csv("/app/data/cb_findings.csv", index_col=0)
 data=data.merge(credit_bureau_data, left_on="SK_ID_CURR", right_on="CB_SK_ID_CURR")
 
 data["date_annee"]=data["date_mensuelle"].dt.year

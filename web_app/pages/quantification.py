@@ -10,18 +10,18 @@ import plotly.graph_objects as go
 import dash_mantine_components as dmc
 
 
-data_test = pd.read_csv("../data/data_seg_test.csv")
-data_train = pd.read_csv("../data/data_seg_train.csv")
+data_test = pd.read_csv("/app/data/data_seg_test.csv")
+data_train = pd.read_csv("/app/data/data_seg_train.csv")
 
-data_test_cash= pd.read_csv("../data/data_seg_test_cash.csv")
-data_train_cash= pd.read_csv("../data/data_seg_train_cash.csv")
+data_test_cash= pd.read_csv("/app/data/data_seg_test_cash.csv")
+data_train_cash= pd.read_csv("/app/data/data_seg_train_cash.csv")
 
-data_test_revolving= pd.read_csv("../data/data_seg_test_revolving.csv")
-data_train_revolving= pd.read_csv("../data/data_seg_train_revolving.csv")
+data_test_revolving= pd.read_csv("/app/data/data_seg_test_revolving.csv")
+data_train_revolving= pd.read_csv("/app/data/data_seg_train_revolving.csv")
 
-data_seg_2020= pd.read_csv("../data/data_seg_2020.csv")
-data_seg_revolving_2020= pd.read_csv("../data/data_seg_revolving_2020.csv")
-data_seg_cash_2020= pd.read_csv("../data/data_seg_cash_2020.csv")
+data_seg_2020= pd.read_csv("/app/data/data_seg_2020.csv")
+data_seg_revolving_2020= pd.read_csv("/app/data/data_seg_revolving_2020.csv")
+data_seg_cash_2020= pd.read_csv("/app/data/data_seg_cash_2020.csv")
 
 border_color = "#8C8C8C"
 
