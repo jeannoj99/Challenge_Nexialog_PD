@@ -21,10 +21,13 @@ import pages.analyse_des_variables as analyse_des_variables
 import pages.modelisation as modelisation
 import pages.quantification as quantification
 import pages.octroi as octroi
+import pages.derniere_page as derniere_page
 import pages.backtesting as backtesting
+from dash_bootstrap_templates import ThemeSwitchAIO
+import dash_mantine_components as dmc
+import os
+from dash_iconify import DashIconify
 
-import warnings
-warnings.filterwarnings("ignore")
 # juste des notes
 
 #BS = "https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
@@ -34,6 +37,9 @@ warnings.filterwarnings("ignore")
 app = dash.Dash(
     external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME],suppress_callback_exceptions=True  
 )
+
+
+
 
 
 # the style arguments for the sidebar. We use position:fixed and a fixed width
@@ -61,7 +67,7 @@ submenu_1 = [
         dbc.Row(
             [
                 dbc.Col(
-                    [html.Img(src="/assets/methodologie.png", height="20px", style={"margin-right": "5px"}), "Méthodologie"],
+                    [html.Img(src="/assets/methodologie.png", height="20px", style={"margin-right": "5px"}), html.Span("Méthodologie", style={"font-weight": "bold", "font-family": "Trebuchet MS, sans-serif"}), ],
                     width="auto",
                     style={"cursor": "pointer"}
                 ),
@@ -78,9 +84,9 @@ submenu_1 = [
     # we use the Collapse component to hide and reveal the navigation links
     dbc.Collapse(
         [
-            dbc.NavLink("Analyse des variables", href="/analyse-des-variables"),
-            dbc.NavLink("Modélisation", href="/modelisation"),
-            dbc.NavLink("Quantification des résultats", href="/quantification"),
+            dbc.NavLink("Analyse des variables", href="/analyse-des-variables", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("Modélisation", href="/modelisation", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("Quantification des résultats", href="/quantification", style={"font-family": "Trebuchet MS, sans-serif"}),
         ],
         id="submenu-1-collapse",
     ),
@@ -106,9 +112,9 @@ submenu_2 = [
         id="submenu-2",
     ),
     dbc.Collapse(
-        [
-            dbc.NavLink("Backtesting", href="/backtesting"),
-            dbc.NavLink("Octroi", href="/octroi"),
+        [   dbc.NavLink("Backtesting", href="/backtesting"),
+            dbc.NavLink("Plateforme Risque de crédit", href="/octroi", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("En savoir plus", href="/en-savoir-plus")
         ],
         id="submenu-2-collapse",
     ),
@@ -131,17 +137,66 @@ sidebar = html.Div(
 )
 
 # Layout for the home page
-home_page_content = html.Div(
-    [
-        html.H1("Modélisation de la PD bâloise"),
-        html.P("Cécile Huang, Jynaldo Jeannot, Yoan Jsem, Alice Liu"),
+# home_page_content = html.Div(
+#     [
+#         html.H1("Modélisation de la PD bâloise"),
+#         html.P("Cécile Huang, Jynaldo Jeannot, Yoan Jsem, Alice Liu"),
+#     ],
+#     style=CONTENT_STYLE
+# )
+
+home_page_content = dmc.Card(
+    children=[
+        dmc.CardSection(
+            dmc.Image(
+                src="/assets/page_accueil_nexialog2.PNG",
+                height=705,
+                #style={"objectFit": "contain"},
+                #mt = "100px"
+            ),
+        ),
+        dmc.Group(
+            [
+                dmc.Text("Composition de l'équipe", weight=500),
+                #dmc.Badge("READY", color="green", variant="light"),
+            ],
+            position="center",
+            mt="md",
+            mb="xs",
+        )
+        ,
+        dmc.Group([dmc.Badge("Cécile HUANG",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQEnsX3GCq2m-Q/profile-displayphoto-shrink_800_800/0/1695562539243?e=1718236800&v=beta&t=5vKndKk0rwOoIY11teaMh0Ef1NO3bXdEtEfe8gnJnqc", size="lg", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="teal"), 
+             dmc.Badge("Jynaldo JEANNOT",leftSection=dmc.Avatar(    src="https://media.licdn.com/dms/image/D5603AQE_h5V9DB5Dag/profile-displayphoto-shrink_200_200/0/1694464803267?e=1718236800&v=beta&t=W0hcOtpbiewCGVQeNn6hPe5bCgovBbRdkMg6kRXv-_o",    size="lg",    radius="xl",    mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="blue"),
+             dmc.Badge("Yoan JSEM",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQG9ya945acRxw/profile-displayphoto-shrink_800_800/0/1700774257624?e=1718236800&v=beta&t=mAckE_Vxw0RrqBG56T6rJ1EkQrpEYrGqNWXphf0F_lg", size="lg", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="violet"), 
+             dmc.Badge("Alice LIU",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQHtWufhFZkwlQ/profile-displayphoto-shrink_200_200/0/1665177569585?e=1718236800&v=beta&t=sMpohGzkNcK_Jt8eseqkxfbSzgjKat5GhYVOWkI1_PY", size="lg", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="yellow"), 
+                             ], 
+        position="center"
+        ),
+
+        dmc.Button(
+            "jsp quoi mettre",
+            variant="light",
+            color="blue",
+            fullWidth=True,
+            mt="md",
+            radius="md",
+        ),
     ],
-    style=CONTENT_STYLE
+    withBorder=True,
+    shadow="sm",
+    radius="md",
+    style={"height": "100%"},
 )
 
 content = html.Div(id="page-content", style=CONTENT_STYLE)
 
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+app.layout = html.Div([
+    dcc.Location(id="url"), 
+    sidebar, 
+    content,
+    ], 
+    style = {'background-color': '#F5F5F5'}
+    )
 
 
 # this function is used to toggle the is_open property of each Collapse
@@ -185,6 +240,8 @@ def render_page_content(pathname):
         return octroi.layout
     elif pathname == "/backtesting":
         return backtesting.layout
+    elif pathname == "/en-savoir-plus":
+        return derniere_page.layout
     # If the user tries to reach a different page, return a 404 message
     return html.Div(
         [
@@ -194,6 +251,7 @@ def render_page_content(pathname):
         ],
         className="p-3 bg-light rounded-3",
     )
+
 
 # Define redirect to home page when clicking on logos
 @app.callback(Output("url", "pathname"), [Input("nexialog-logo", "n_clicks"), Input("mosef-logo", "n_clicks")])
