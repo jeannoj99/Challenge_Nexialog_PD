@@ -84,14 +84,14 @@ def choix_var_2_ou_target(checked_target, cat_or_num):
             id='var_2_compare',
             data=[{'label': i, 'value': i} for i in sorted(list(set(discretised_cols+tested_numerical_variables)))] ,
             value=None,
-            label='Select a 2nd variable'
+            label='Sélectionner une 2ème variable'
         )
     elif cat_or_num=='categorical':
         return dmc.Select(
             id='var_2_compare',
             data=[{'label': i, 'value': i} for i in sorted(list(set(catego_a_utiliser + discretised_cols)))] ,
             value=None,
-            label='Select a 2nd variable'
+            label='Sélectionner une 2ème variable'
         )
 
 
@@ -105,14 +105,14 @@ def choix_var_1(cat_or_num):
             id='var_1_compare',
             data=[{'label': i, 'value': i} for i in sorted(list(set(discretised_cols+tested_numerical_variables)))] ,
             value=None,
-            label='Select a 1st variable'
+            label='Sélectionner la 1ère variable'
         )
     elif cat_or_num=='categorical':
         return dmc.Select(
             id='var_1_compare',
             data=[{'label': i, 'value': i} for i in sorted(list(set(catego_a_utiliser + discretised_cols)))] ,
             value=None,
-            label='Select a 1st variable')
+            label='Sélectionner la 1ère variable')
 
 @callback(Output('valeur_var_1','children'),
           Input('var_1_compare','value')
@@ -163,17 +163,22 @@ def compute_stats(cat_or_num, checked_target, booleen, vrai_var1, vrai_var2):
         iv = calculate_information_value(data_for_hc_d_train, vrai_var1)
         cramer= cramers_v_target(data_for_hc_d_train, vrai_var1)
         # print(chi)
-        return [chi, iv, cramer]
+        # return [chi, iv, cramer]
+        return dmc.Alert(f"{chi}, {iv}, {cramer}", title="Résultats", color="green")
     
     elif checked_target and cat_or_num =='numerical' and booleen == True : # Kruskal test
-        return kruskal_wallis_test(data_discret,vrai_var1)
+        # return kruskal_wallis_test(data_discret,vrai_var1)
+        return dmc.Alert(f"{kruskal_wallis_test(data_discret,vrai_var1)}", title="Résultats", color="green")
     
     elif cat_or_num =='numerical' and booleen == True: # Corr Pearson
         correlation = data_discret[[vrai_var1,vrai_var2]].corr().values[0,1]
-        return f"Corrélation entre {vrai_var1} et {vrai_var2} est de : {correlation}"
+        # return f"Corrélation entre {vrai_var1} et {vrai_var2} est de : {correlation}"
+        return dmc.Alert(f"Corrélation entre {vrai_var1} et {vrai_var2} est de : {correlation}", title="Résultats", color="green")
     
     elif cat_or_num=='categorical': # Chi2, Cramer
         chi = calculate_chi_stat_cols(data_for_hc_d_train,vrai_var1,vrai_var2)
         cramer = cramers_v_cols(data_for_hc_d_train,vrai_var1,vrai_var2)
-        return chi + cramer
+        # return chi + cramer
+        return dmc.Alert(f"{chi}, {cramer}", title="Résultats", color="green")
+
     

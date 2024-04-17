@@ -35,7 +35,7 @@ layout = html.Div(
         dmc.Container([
             html.Div(
                 [
-                    dmc.Title('Choose your variable', order=3, style={'textAlign': 'center'}),
+                    dmc.Title('Choisir la variable', order=2, style={'textAlign': 'center'}),
                     html.Br(),
                     dmc.Select(
                         data=[{'label': i, 'value': i} for i in sorted(list(set(binary_vars_for_app + lc_vars_for_app + catego_a_utiliser)))],
@@ -55,20 +55,32 @@ layout = html.Div(
                         [
                             dcc.Graph(id='graph_risk_stability_overtime'),
                         ],
-                        style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
+                        style={'flex': '1', 'margin-right': '10px', 'width': '100%'}  # Utilisez 30% de la largeur de la fenêtre
                     ),
                     html.Div(
                         [
                             dcc.Graph(id='graph_volume_stability_overtime'),
                         ],
-                        style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
+                        style={'flex': '1', 'margin-right': '10px', 'width': '100%'}  # Utilisez 30% de la largeur de la fenêtre
                     )
                 ],
-                style={'display': 'flex', 'flexDirection': 'row', 'width': '100%'}
+style={
+    'display': 'flex', 
+    'flexDirection': 'row', 
+    'justifyContent': 'center',
+    'width': '1200px',  # largeur fixe du conteneur
+    'marginLeft': 'auto',  # centrer horizontalement
+    'marginRight': '0'  
+}
+
             )
         ]),
 
 # Ici la partie gestion des variables
+
+        dmc.Divider(size="sm", style={"margin": "auto", "width": "50%", "align": "center"}),
+        html.Br(),
+        dmc.Title("Tests statistiques", order = 2, style={'textAlign': 'center'}),
 
         dmc.Container([
             
@@ -77,21 +89,28 @@ layout = html.Div(
                     id="catego_ou_numerique",
                     value="numerical",
                     data=[
-                        {"value": "numerical", "label": "Numerical Variables"},
-                        {"value": "categorical", "label": "Categorical Variables"}
+                        {"value": "numerical", "label": "Variables Numériques"},
+                        {"value": "categorical", "label": "Variables Catégorielles"}
                     ],
                     mt=10,
-        ),
-                dmc.Checkbox(id='target_selected_checkbox', label='Compare with Target'),
+        ),      
+                # html.Br(style={'height' : 100}),
+                dmc.Checkbox(id='target_selected_checkbox', label='Comparer avec la Target'),
+                html.Br(style={'height' : 200}),
                 html.Div(id='choice_var_1'),
                 html.Div(id='choice_var_2'),
                 html.Div(id='var_1_compare'),
                 html.Div(id='var_2_compare'),
+                html.Br(style={'height' : 200}),
 
                 html.Div(
     [
         # dmc.Checkbox(id="checkbox-simple", label="Valider", mb=10),
-        dmc.Button('Cliquer pour valider votre choix', id='submit-var-explo', n_clicks=0, style={'background-color': 'skyblue', 'padding': '5px 15px', 'font-size': '16px'}),
+        dmc.Button('Cliquer pour valider votre choix', id='submit-var-explo', n_clicks=0, style={'background-color': 'skyblue', 
+                                                                                                 'padding': '5px 15px', 
+                                                                                                 'font-size': '16px', 
+                                                                                                 'margin': 'auto', 
+                                                                                                 'display': 'block'}),
         dmc.Text(id="checkbox-output"),
     ]
 ),
