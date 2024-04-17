@@ -23,6 +23,7 @@ import pages.quantification as quantification
 import pages.octroi as octroi
 import pages.derniere_page as derniere_page
 import pages.backtesting as backtesting
+import pages.ml_models as ml_models
 from dash_bootstrap_templates import ThemeSwitchAIO
 import dash_mantine_components as dmc
 import os
@@ -87,6 +88,8 @@ submenu_1 = [
             dbc.NavLink("Analyse des variables", href="/analyse-des-variables", style={"font-family": "Trebuchet MS, sans-serif"}),
             dbc.NavLink("Modélisation", href="/modelisation", style={"font-family": "Trebuchet MS, sans-serif"}),
             dbc.NavLink("Quantification des résultats", href="/quantification", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("Modèle Challenger", href="/ml-model", style={"font-family": "Trebuchet MS, sans-serif"}),
+            
         ],
         id="submenu-1-collapse",
     ),
@@ -242,6 +245,8 @@ def render_page_content(pathname):
         return backtesting.layout
     elif pathname == "/en-savoir-plus":
         return derniere_page.layout
+    elif pathname == "/ml-model":
+        return ml_models.layout
     # If the user tries to reach a different page, return a 404 message
     return html.Div(
         [
