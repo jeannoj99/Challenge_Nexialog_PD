@@ -189,7 +189,7 @@ layout = html.Div([
 
         [
             html.Div([
-        html.H2(children='Graphiques de répartition et de taux de défaut par CHR', style={'textAlign': 'center'}),
+        dmc.Title('Graphiques de répartition et de taux de défaut par CHR', order = 1, style={'textAlign': 'center'}),
         html.Div([
             html.Div([
                 html.H3("Les données d'entraînement", style={'fontSize': '16px'}),
@@ -218,7 +218,7 @@ layout = html.Div([
         [
 
         html.Div([
-        html.H2(children='Graphiques de stabilité du risque au fil du temps', style={'textAlign': 'center'}),
+        dmc.Title('Graphiques de stabilité du risque au fil du temps', order=1, style={'textAlign': 'center'}),
         html.Div([
             html.Div([
                 html.H3("Les données d'entraînement", style={'fontSize': '16px'}),
