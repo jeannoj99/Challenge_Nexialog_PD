@@ -1,5 +1,5 @@
 # contient toutes les fonctions callbacks utilisées
-from dash import Dash, html, dcc,Input, Output, callback, State , dash_table, MATCH, ALL, ctx
+from dash import Dash, html, dcc,Input, Output, callback, State , dash_table, MATCH, ALL, ctx, no_update
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -8,6 +8,11 @@ from utils.preprocessing import data_for_binary, data_for_lc, data_for_hc_nd, da
 from utils.preprocessing import low_category_non_stable_vars
 from utils.preprocessing import hc_vars_for_app_nd, hc_vars_for_app_d
 from utils.utils import cramers_v, mannwhitney_test, calculate_information_value, calculate_chi_stat
+
+import plotly.figure_factory as ff
+import numpy as np
+from scipy.stats import ks_2samp
+from models.callable import DecisionExpertSystem, Dataset, binomial_test
 
 # variables binaires (b)
 @callback(
@@ -155,70 +160,3 @@ def hc_iv(colname,checked):
     else:
         return calculate_information_value(data_for_hc_nd, colname) 
     
-# Jynaldo
-from models.callable import DecisionExpertSystem
-
-fields = ["NAME_CONTRACT_TYPE","OCCUPATION_TYPE", "NAME_EDUCATION_TYPE" ,"CODE_GENDER", "CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT", "AMT_CREDIT",
-          "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","DAYS_LAST_PHONE_CHANGE"]
-
-# Liste des variables catégorielles et numériques
-categorical_vars = ["NAME_CONTRACT_TYPE", "OCCUPATION_TYPE", "NAME_EDUCATION_TYPE","CODE_GENDER"]
-numeric_vars = ["CB_NB_CREDIT_CLOSED", "CB_DAYS_CREDIT", "AMT_CREDIT",
-                "CB_AMT_CREDIT_SUM", "AMT_INCOME_TOTAL", "AMT_GOODS_PRICE", "DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","DAYS_LAST_PHONE_CHANGE"]
-
-
-@callback(
-        Output('decision', 'children'),
-        Output('decision','style'),
-        Output('dropdown-NAME_CONTRACT_TYPE', 'value'),
-        Output('dropdown-OCCUPATION_TYPE', 'value'),
-        Output('dropdown-NAME_EDUCATION_TYPE', 'value'),
-        Output('dropdown-CODE_GENDER', 'value'),
-        Output('input-CB_NB_CREDIT_CLOSED', 'value'),
-        Output('input-CB_DAYS_CREDIT', 'value'),
-        Output('input-AMT_CREDIT', 'value'),
-        Output('input-CB_AMT_CREDIT_SUM', 'value'),
-        Output('input-AMT_INCOME_TOTAL', 'value'),
-        Output('input-AMT_GOODS_PRICE', 'value'),
-        Output('input-DAYS_BIRTH', 'value'),
-        Output('input-DAYS_EMPLOYED', 'value'),
-        Output('input-DAYS_REGISTRATION', 'value'),
-        Output('input-DAYS_LAST_PHONE_CHANGE', 'value'),
-        Input('submit-button', 'n_clicks'),
-        
-        State('dropdown-NAME_CONTRACT_TYPE', 'value'),
-        State('dropdown-OCCUPATION_TYPE', 'value'),
-        State('dropdown-NAME_EDUCATION_TYPE', 'value'),
-        State('dropdown-CODE_GENDER', 'value'),
-        State('input-CB_NB_CREDIT_CLOSED', 'value'),
-        State('input-CB_DAYS_CREDIT', 'value'),
-        State('input-AMT_CREDIT', 'value'),
-        State('input-CB_AMT_CREDIT_SUM', 'value'),
-        State('input-AMT_INCOME_TOTAL', 'value'),
-        State('input-AMT_GOODS_PRICE', 'value'),
-        State('input-DAYS_BIRTH', 'value'),
-        State('input-DAYS_EMPLOYED', 'value'),
-        State('input-DAYS_REGISTRATION', 'value'),
-        State('input-DAYS_LAST_PHONE_CHANGE', 'value'),
-        prevent_initial_call=True
-)
-def update_decision_output(n_clicks, *values):
-    if ctx.triggered_id == 'submit-button':
-        field_values = {}
-        # Ajout des valeurs des dropdowns pour les variables catégorielles
-        for i, field in enumerate(categorical_vars):
-            field_values[field] = values[i]
-
-        # Ajout des valeurs des champs de saisie numérique pour les variables numériques
-        for i, field in enumerate(numeric_vars):
-            field_values[field] = values[i + len(categorical_vars)]
-        
-        data = DecisionExpertSystem(field_values)
-        data.transform_columns()
-        data.score()
-        decision, decision_color = data.get_decision()
-        
-        # Mise à jour du style de l'élément 'decision' avec la couleur obtenue
-        decision_style = {'textAlign': 'center', 'padding': '20px', 'backgroundColor': decision_color}
-        
-        return decision, decision_style, *values

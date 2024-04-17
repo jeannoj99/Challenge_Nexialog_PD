@@ -21,6 +21,7 @@ import pages.analyse_des_variables as analyse_des_variables
 import pages.modelisation as modelisation
 import pages.quantification as quantification
 import pages.octroi as octroi
+import pages.backtesting as backtesting
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -106,8 +107,8 @@ submenu_2 = [
     ),
     dbc.Collapse(
         [
+            dbc.NavLink("Backtesting", href="/backtesting"),
             dbc.NavLink("Octroi", href="/octroi"),
-            dbc.NavLink("Page 2.2", href="/page-2/2"),
         ],
         id="submenu-2-collapse",
     ),
@@ -182,8 +183,8 @@ def render_page_content(pathname):
         return quantification.layout
     elif pathname == "/octroi":
         return octroi.layout
-    elif pathname == "/page-2/2":
-        return html.P("No way! This is page 2.2!")
+    elif pathname == "/backtesting":
+        return backtesting.layout
     # If the user tries to reach a different page, return a 404 message
     return html.Div(
         [
