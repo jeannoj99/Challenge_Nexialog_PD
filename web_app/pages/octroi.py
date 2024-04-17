@@ -134,7 +134,7 @@ layout = html.Div(
 
             ,
 
-            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="200"
+            style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, #size à régler?
         ) ,
 
 
