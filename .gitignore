@@ -1,2 +1,5 @@
 data/
 .venv_pd/
+page4.py
+page4_test.py
+backtest.py
