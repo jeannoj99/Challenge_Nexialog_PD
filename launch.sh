@@ -1,4 +1,4 @@
 #!/bin/bash
-cd /app/web_app
+cd web_app/
 
 python3 app.py

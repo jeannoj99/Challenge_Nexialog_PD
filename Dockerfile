@@ -14,5 +14,5 @@ RUN python3 -m pip install -r requirements.txt
 
 WORKDIR /app/web_app
 
-CMD ["python3", "app.py"]
+#CMD ["python3", "app.py"]
 
