@@ -151,7 +151,7 @@ dmc.Timeline(
             ],
         ),
         dmc.TimelineItem(
-            title=dmc.Title("Credit Risk Platform",order=4),
+            title=dmc.Title("Expert System Decision Tool",order=4),
             children=[
                 dmc.Text(
                     [

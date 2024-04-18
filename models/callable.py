@@ -159,14 +159,14 @@ class DecisionExpertSystem :
         segment = self.get_chr()
         # automatic refusal rules
         if self.data["DAYS_BIRTH"].apply(np.abs).values[0]//365 < 18:
-            return "Refusal", "red"
+            return "Refusal !", "red", "Business rules : age < 18"
         elif segment in [0,1]:
-            return "Refusal","red"
+            return "Refusal !","red", "Risky profile : low score"
         # referal to analyst à enrichir
         elif segment in [2,3,4]:
-            return "Referal to Analyst","yellow"
+            return "Referal to Analyst !","yellow", "Need to have human decision"
         elif segment in [5,6]:
-            return "Approval","green"
+            return "Approval !","green", "Congratulations, loan granted"
         
         else :
             return None

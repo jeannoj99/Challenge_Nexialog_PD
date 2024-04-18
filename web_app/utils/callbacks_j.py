@@ -30,8 +30,9 @@ numeric_vars = ["CNT_CHILDREN", "CB_NB_CREDIT_CLOSED", "AMT_CREDIT",
 date_vars = ["DAYS_BIRTH", "DAYS_EMPLOYED", "DAYS_REGISTRATION","CB_DAYS_CREDIT", "DAYS_LAST_PHONE_CHANGE"]
 
 @callback(
-        Output('decision-alert', 'children'),
+        Output('decision-alert', 'title'),
         Output('decision-alert', 'color'),
+        Output('decision-alert', 'message'),
         Output('decision-alert', 'style'),
         Output("decision-alert", "hide"),
         Output('dropdown-NAME_CONTRACT_TYPE', 'value'),
@@ -89,14 +90,14 @@ def update_decision_output(n_clicks, hide, *values):
         data.transform_columns()
         data.score()
         decision, decision_color = data.get_decision()
-        
+        decision_message = "zzzz"
         # Mise à jour du style de l'élément 'decision' avec la couleur obtenue
         decision_style = {'display': 'block'}
         
         if hide == True :
             hide = False
             
-        return  decision, decision_color, decision_style, hide, *values
+        return  decision, decision_color, decision_message, decision_style, hide, *values
     
 #######################################################################################################################################
 ############################################################### BACKTESTING ###########################################################

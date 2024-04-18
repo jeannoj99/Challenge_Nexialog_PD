@@ -68,7 +68,8 @@ submenu_1 = [
         dbc.Row(
             [
                 dbc.Col(
-                    [html.Img(src="/assets/methodologie.png", height="20px", style={"margin-right": "5px"}), html.Span("Méthodologie", style={"font-weight": "bold", "font-family": "Trebuchet MS, sans-serif"}), ],
+                    [html.Img(src="/assets/methodologie.png", height="20px", style={"margin-right": "5px"}), 
+                     html.Span("Méthodologie", style={"font-weight": "bold", "font-family": "Trebuchet MS, sans-serif"}), ],
                     width="auto",
                     style={"cursor": "pointer"}
                 ),
@@ -100,7 +101,8 @@ submenu_2 = [
         dbc.Row(
             [
                 dbc.Col(
-                    [html.Img(src="/assets/croissance.png", height="20px", style={"margin-right": "5px"}), "Utilité Métier"],
+                    [html.Img(src="/assets/croissance.png", height="20px", style={"margin-right": "5px"}),
+                     html.Span("Extensions", style={"font-weight": "bold", "font-family": "Trebuchet MS, sans-serif"})],
                     width="auto",
                     style={"cursor": "pointer"}
                 ),
@@ -116,8 +118,8 @@ submenu_2 = [
     ),
     dbc.Collapse(
         [   dbc.NavLink("Backtesting", href="/backtesting"),
-            dbc.NavLink("Plateforme Risque de crédit", href="/octroi", style={"font-family": "Trebuchet MS, sans-serif"}),
-            dbc.NavLink("En savoir plus", href="/en-savoir-plus")
+            dbc.NavLink("Expert System Decision Tool", href="/octroi", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("En savoir plus", href="/en-savoir-plus", style={"font-family": "Trebuchet MS, sans-serif"})
         ],
         id="submenu-2-collapse",
     ),
@@ -131,7 +133,6 @@ sidebar = html.Div(
             html.Img(id="mosef-logo", src="/assets/logo_mosef.png", height="60px", style={"cursor": "pointer"}),
         ], style={"width": "60%", "margin": "auto", "text-align": "center"}),
 
-        #html.H4("NEXIALOG x MoSEF", className="display-6"),
         html.Hr(),
         dbc.Nav(submenu_1 + submenu_2, vertical=True),
     ],
@@ -139,14 +140,6 @@ sidebar = html.Div(
     id="sidebar",
 )
 
-# Layout for the home page
-# home_page_content = html.Div(
-#     [
-#         html.H1("Modélisation de la PD bâloise"),
-#         html.P("Cécile Huang, Jynaldo Jeannot, Yoan Jsem, Alice Liu"),
-#     ],
-#     style=CONTENT_STYLE
-# )
 
 home_page_content = dmc.Card(
     children=[
@@ -161,23 +154,22 @@ home_page_content = dmc.Card(
         dmc.Group(
             [
                 dmc.Text("Composition de l'équipe", weight=500),
-                #dmc.Badge("READY", color="green", variant="light"),
             ],
             position="center",
             mt="md",
             mb="xs",
         )
         ,
-        dmc.Group([dmc.Badge("Cécile HUANG",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQEnsX3GCq2m-Q/profile-displayphoto-shrink_800_800/0/1695562539243?e=1718236800&v=beta&t=5vKndKk0rwOoIY11teaMh0Ef1NO3bXdEtEfe8gnJnqc", size="lg", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="teal"), 
-             dmc.Badge("Jynaldo JEANNOT",leftSection=dmc.Avatar(    src="https://media.licdn.com/dms/image/D5603AQE_h5V9DB5Dag/profile-displayphoto-shrink_200_200/0/1694464803267?e=1718236800&v=beta&t=W0hcOtpbiewCGVQeNn6hPe5bCgovBbRdkMg6kRXv-_o",    size="lg",    radius="xl",    mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="blue"),
-             dmc.Badge("Yoan JSEM",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQG9ya945acRxw/profile-displayphoto-shrink_800_800/0/1700774257624?e=1718236800&v=beta&t=mAckE_Vxw0RrqBG56T6rJ1EkQrpEYrGqNWXphf0F_lg", size="lg", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="violet"), 
-             dmc.Badge("Alice LIU",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQHtWufhFZkwlQ/profile-displayphoto-shrink_200_200/0/1665177569585?e=1718236800&v=beta&t=sMpohGzkNcK_Jt8eseqkxfbSzgjKat5GhYVOWkI1_PY", size="lg", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="yellow"), 
+        dmc.Group([dmc.Badge("Cécile HUANG",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQEnsX3GCq2m-Q/profile-displayphoto-shrink_800_800/0/1695562539243?e=1718236800&v=beta&t=5vKndKk0rwOoIY11teaMh0Ef1NO3bXdEtEfe8gnJnqc", size="md", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="teal"), 
+             dmc.Badge("Jynaldo JEANNOT",leftSection=dmc.Avatar(    src="https://media.licdn.com/dms/image/D5603AQE_h5V9DB5Dag/profile-displayphoto-shrink_200_200/0/1694464803267?e=1718236800&v=beta&t=W0hcOtpbiewCGVQeNn6hPe5bCgovBbRdkMg6kRXv-_o",    size="md",    radius="xl",    mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="blue"),
+             dmc.Badge("Yoan JSEM",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQG9ya945acRxw/profile-displayphoto-shrink_800_800/0/1700774257624?e=1718236800&v=beta&t=mAckE_Vxw0RrqBG56T6rJ1EkQrpEYrGqNWXphf0F_lg", size="md", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="violet"), 
+             dmc.Badge("Alice LIU",leftSection=dmc.Avatar( src="https://media.licdn.com/dms/image/D4E03AQHtWufhFZkwlQ/profile-displayphoto-shrink_200_200/0/1665177569585?e=1718236800&v=beta&t=sMpohGzkNcK_Jt8eseqkxfbSzgjKat5GhYVOWkI1_PY", size="md", radius="xl", mr=1,),sx={"paddingLeft": 0},size="xl",radius="xl",color="yellow"), 
                              ], 
         position="center"
         ),
 
         dmc.Button(
-            "jsp quoi mettre",
+            "Bievenue dans CreditWise !",
             variant="light",
             color="blue",
             fullWidth=True,
