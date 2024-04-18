@@ -9,7 +9,7 @@ from dash_iconify import DashIconify
 
 layout = html.Div(
     [
-    dmc.Title("Curieux de tester de l'application ?"),
+    dmc.Title("Curieux de tester l'application ?"),
 
     html.Br(),
 
@@ -17,7 +17,7 @@ html.Div([
     # À gauche : dmc.Center
     dmc.Center([
         dmc.Image(
-            src="/assets/qr_code.jpg",
+            src="/assets/qr_code2.png",
             alt="qr_code",
             width=610,
             radius="md"
@@ -121,7 +121,7 @@ dmc.Timeline(
             ],
         ),
         dmc.TimelineItem(
-            title=dmc.Title("Modélisation", order=4),
+            title=dmc.Title("Différenciation du risque", order=4),
             children=[
                 dmc.Text(
                     [
@@ -134,7 +134,7 @@ dmc.Timeline(
             ],
         ),
         dmc.TimelineItem(
-            title=dmc.Title("Quantification des résultats",order=4),
+            title=dmc.Title("Quantification du risque",order=4),
             children=[
                 dmc.Text(
                     [
@@ -150,20 +150,25 @@ dmc.Timeline(
                 ),
             ],
         ),
-        dmc.TimelineItem(
-            title=dmc.Title("Expert System Decision Tool",order=4),
+
+                dmc.TimelineItem(
+            title=dmc.Title("Modèles de Machine Learning",order=4),
             children=[
                 dmc.Text(
                     [
-                        "Accéder à la  ",
-                        dmc.Anchor("plateforme", href="/modelisation", size="sm"),
-                        " d'octroi"
+                        "Revoir le ",
+                        dmc.Anchor(
+                            "modèle challenger",
+                            href="/ml-model",
+                            size="sm",
+                        ),
                     ],
                     color="dimmed",
                     size="sm",
                 ),
             ],
         ),
+
         dmc.TimelineItem(
             title=dmc.Title("Backtesting",order=4),
             children=[
@@ -181,23 +186,23 @@ dmc.Timeline(
                 ),
             ],
         ),
+
         dmc.TimelineItem(
-            title=dmc.Title("Modèles de Machine Learning",order=4),
+            title=dmc.Title("Expert System Decision Tool",order=4),
             children=[
                 dmc.Text(
                     [
-                        "Revoir le ",
-                        dmc.Anchor(
-                            "modèle challenger",
-                            href="/ml-model",
-                            size="sm",
-                        ),
+                        "Accéder à la  ",
+                        dmc.Anchor("plateforme", href="/octroi", size="sm"),
+                        " d'octroi"
                     ],
                     color="dimmed",
                     size="sm",
                 ),
             ],
         ),
+        
+
         dmc.TimelineItem(
             [ 
                 dmc.Text(

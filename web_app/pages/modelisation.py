@@ -392,7 +392,7 @@ def update_repartition(selected_data):
 
      # Mise en forme du titre et des axes
     fig.update_layout(
-         title=f'Distribution de TARGET en fonction de la Note sur {selected_data} pour "All Contracts"',
+         title=f'Distribution de la Note sur {selected_data} pour "All Contracts"',
          xaxis_title='Note',
          yaxis_title='Fréquence',
          template="simple_white"
@@ -588,7 +588,7 @@ def update_repartition(selected_data,selected_model):
 
      # Mise en forme du titre et des axes
     fig.update_layout(
-         title=f'Distribution de TARGET en fonction de la Note sur {selected_data} pour {selected_model}',
+         title=f'Distribution de la Note sur {selected_data} pour {selected_model}',
          xaxis_title='Note',
          yaxis_title='Fréquence',
          template = "simple_white"

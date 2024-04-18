@@ -358,14 +358,24 @@ def update_risk_quantification_ml(model_choice):
      )
     
     fig_density.update_layout(
-         title=f'Distribution de TARGET en fonction de la Note sur {model_choice}',
+         title=f'Distribution de la note suivant la cible pour {model_choice} (test)',
          xaxis_title='Note',
          yaxis_title='Fréquence',
          xaxis=dict(range=[min(data0.min(), data1.min()), max(data0.max(), data1.max())])
      )
     
     risk_fig = show_risk_stability_overtime(datas_challenger[model_choice]["test"], "Segment")
+
+    
+    risk_fig.update_layout(
+        title = f"Stabilité en risque des segments dans le temps pour {model_choice} (test)"
+    )
+    
     segment_fig = subplot_segment_default_rate(datas_challenger[model_choice]["test"])
+    
+    segment_fig.update_layout(
+        title = f"Répartition sur les segments et taux de défaut par segment pour {model_choice} (test)")
+
     
     # Update PD summary table
     pd_summary_data = pd_summaries_ml[model_choice].to_dict('records')

@@ -36,7 +36,10 @@ from dash_iconify import DashIconify
 
 # link fontawesome to get the chevron icons
 app = dash.Dash(
-    external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME],suppress_callback_exceptions=True  
+    __name__,
+    external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.FONT_AWESOME],
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}],
+    suppress_callback_exceptions=True
 )
 
 
@@ -87,8 +90,8 @@ submenu_1 = [
     dbc.Collapse(
         [
             dbc.NavLink("Analyse des variables", href="/analyse-des-variables", style={"font-family": "Trebuchet MS, sans-serif"}),
-            dbc.NavLink("Modélisation", href="/modelisation", style={"font-family": "Trebuchet MS, sans-serif"}),
-            dbc.NavLink("Quantification des résultats", href="/quantification", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("Différenciation du risque", href="/modelisation", style={"font-family": "Trebuchet MS, sans-serif"}),
+            dbc.NavLink("Quantification du risque", href="/quantification", style={"font-family": "Trebuchet MS, sans-serif"}),
             dbc.NavLink("Modèle Challenger", href="/ml-model", style={"font-family": "Trebuchet MS, sans-serif"}),
             
         ],
