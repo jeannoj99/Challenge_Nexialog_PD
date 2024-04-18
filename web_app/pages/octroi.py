@@ -88,7 +88,7 @@ style = {
 layout = html.Div(
     children=[
         html.Div(
-            dmc.Title(children='CREDIT RISK PLATFORM', order=1, style={'text-align': 'center', 'color': 'slategray'}),
+            dmc.Title(children='EXPERT SYSTEM DECISION TOOL', order=1, style={'text-align': 'center', 'color': 'slategray'}),
             style={'margin': '20px auto'}
         ),
 
@@ -142,7 +142,7 @@ layout = html.Div(
         
         dmc.Container(
             dmc.Paper(
-                dmc.Alert("Credit decision will be displayed here", id="decision-alert", color="gray", withCloseButton=True, style={'display': 'none'}),
+                dmc.Alert("Credit decision", title= "", id="decision-alert", color="gray", withCloseButton=True),
                 withBorder=True,
                 radius="md",
                 shadow="xs",

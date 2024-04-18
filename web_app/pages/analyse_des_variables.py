@@ -35,7 +35,7 @@ layout = html.Div(
         dmc.Container([
             html.Div(
                 [
-                    dmc.Title('Choose your variable', order=3, style={'textAlign': 'center'}),
+                    dmc.Title('Choisir la variable', order=2, style={'textAlign': 'center'}),
                     html.Br(),
                     dmc.Select(
                         data=[{'label': i, 'value': i} for i in sorted(list(set(binary_vars_for_app + lc_vars_for_app + catego_a_utiliser)))],
@@ -55,20 +55,32 @@ layout = html.Div(
                         [
                             dcc.Graph(id='graph_risk_stability_overtime'),
                         ],
-                        style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
+                        style={'flex': '1', 'margin-right': '10px', 'width': '100%'}  # Utilisez 30% de la largeur de la fenêtre
                     ),
                     html.Div(
                         [
                             dcc.Graph(id='graph_volume_stability_overtime'),
                         ],
-                        style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
+                        style={'flex': '1', 'margin-right': '10px', 'width': '100%'}  # Utilisez 30% de la largeur de la fenêtre
                     )
                 ],
-                style={'display': 'flex', 'flexDirection': 'row', 'width': '100%'}
+style={
+    'display': 'flex', 
+    'flexDirection': 'row', 
+    'justifyContent': 'center',
+    'width': '1200px',  # largeur fixe du conteneur
+    'marginLeft': 'auto',  # centrer horizontalement
+    'marginRight': '0'  
+}
+
             )
         ]),
 
 # Ici la partie gestion des variables
+
+        dmc.Divider(size="sm", style={"margin": "auto", "width": "50%", "align": "center"}),
+        html.Br(),
+        dmc.Title("Tests statistiques", order = 2, style={'textAlign': 'center'}),
 
         dmc.Container([
             
@@ -77,21 +89,28 @@ layout = html.Div(
                     id="catego_ou_numerique",
                     value="numerical",
                     data=[
-                        {"value": "numerical", "label": "Numerical Variables"},
-                        {"value": "categorical", "label": "Categorical Variables"}
+                        {"value": "numerical", "label": "Variables Numériques"},
+                        {"value": "categorical", "label": "Variables Catégorielles"}
                     ],
                     mt=10,
-        ),
-                dmc.Checkbox(id='target_selected_checkbox', label='Compare with Target'),
+        ),      
+                # html.Br(style={'height' : 100}),
+                dmc.Checkbox(id='target_selected_checkbox', label='Comparer avec la Target'),
+                html.Br(style={'height' : 200}),
                 html.Div(id='choice_var_1'),
                 html.Div(id='choice_var_2'),
                 html.Div(id='var_1_compare'),
                 html.Div(id='var_2_compare'),
+                html.Br(style={'height' : 200}),
 
                 html.Div(
     [
         # dmc.Checkbox(id="checkbox-simple", label="Valider", mb=10),
-        dmc.Button('Cliquer pour valider votre choix', id='submit-var-explo', n_clicks=0, style={'background-color': 'skyblue', 'padding': '5px 15px', 'font-size': '16px'}),
+        dmc.Button('Cliquer pour valider votre choix', id='submit-var-explo', n_clicks=0, style={'background-color': 'skyblue', 
+                                                                                                 'padding': '5px 15px', 
+                                                                                                 'font-size': '16px', 
+                                                                                                 'margin': 'auto', 
+                                                                                                 'display': 'block'}),
         dmc.Text(id="checkbox-output"),
     ]
 ),
@@ -108,3 +127,148 @@ layout = html.Div(
     ],
     style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}
 )
+
+
+
+ 
+# A partir de là variables catégorielles (lc)
+
+#     dmc.Container(
+#         [
+#             html.Div(
+#             [
+#                 html.Div(
+#                     [
+#                         dmc.Title('Categorical Variables', order = 3, style={'textAlign': 'center'}),
+#                         html.Br(),
+#                         dmc.Select(
+#                             data=lc_vars_for_app,
+#                             value='NAME_CONTRACT_TYPE',
+#                             id='lc_col',
+#                             style={"width": 400, "margin": "0 auto", "marginBottom": 10, 'textAlign': 'center'}
+#                         ),
+#                         html.Br(),
+#                     ],
+#                     style={'padding': '1%'}
+#                 ),
+#                 html.Div(
+#                     [
+#                         html.Div(
+#                             [
+#                                 dcc.Graph(id='lc_graph_risk_stability_overtime'),
+#                             ],
+#                             style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
+#                         ),
+#                         html.Div(
+#                             [
+#                                 dcc.Graph(id='lc_graph_volume_stability_overtime'),
+#                             ],
+#                             style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
+#                         ),
+
+#                     ],
+#                     style={'display': 'flex', 'flexDirection': 'row', 'width': '100%'}  
+#                 ),
+
+#                 html.Div(id="lc_stability_info"), 
+
+#                 html.Br() 
+               
+#             ],
+#             style={'display': 'flex', 'flexDirection': 'column'}
+#         ),
+
+
+#         ],
+
+#         style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="100"
+
+#     ),
+         
+# html.Br(),
+
+# # A partir de là variable catégo (hc)
+
+#         dmc.Container(
+
+#             [
+#                  html.Div(
+#             [ 
+#             #     html.H3(children='Variables catégorielles à grand nombre de modalités',
+#             # style={'margin-bottom': '15px','textAlign': 'left'}),
+
+#             dmc.Title('Variables catégorielles à grand nombre de modalités', order = 3, style={'textAlign': 'center'}),
+
+#             html.Br(),
+
+#             dmc.Checkbox(label="Variables discrétisées", id="checkbox_discretized_choice", style={"width": 400, "margin": "0 auto", "marginBottom": 10, 'textAlign': 'center'}),
+
+#             dcc.Dropdown(id="dropdown_var_choice",options=[{'label': i, 'value': i} for i in hc_vars_for_app_nd],value='NAME_EDUCATION_TYPE', style={"width": 400, "margin": "0 auto", "marginBottom": 10, 'textAlign': 'center'}),
+             
+#             html.Div([
+            
+            
+#             html.Br(),
+            
+#             html.Div(
+#                     [
+#                         html.Div(
+#                             [
+#                                 dcc.Graph(id='hc_graph_risk_stability_overtime'),
+#                             ],
+#                             style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
+#                         ),
+#                         html.Div(
+#                             [
+#                                 dcc.Graph(id='hc_graph_volume_stability_overtime'),
+#                             ],
+#                             style={'flex': '1', 'margin-right': '10px', 'width': '45vw'}  # Utilisez 30% de la largeur de la fenêtre
+#                         ),
+#                     ],
+#                     style={'display': 'flex', 'flexDirection': 'row', 'width': '100%'}  
+#                 ),
+#                 html.Div(
+#                     [
+#                         html.Div(
+#                             [
+#                                 html.Div(
+#                                     [
+#                                         html.H4("Informations supplémentaires"),
+#                                         dmc.List(
+#                                             [
+# # TODO REGARDEZ CE QUE VOUS VOULEZ FAIRE AVEC LES ARRONDIS (check utils.utils)
+#                                                 dmc.ListItem(id='hc_stability_info'),
+#                                                 dmc.ListItem(id='hc_chi_stat_info'),
+#                                                 dmc.ListItem(id='hc_cramers_v_info'),
+# # TODO QUOI FAIRE AVEC MANNWHITEENYE                                                
+#                                                 dmc.ListItem(id='hc_mann_whitney_info'), 
+#                                                 dmc.ListItem(id='hc_iv_info'),
+                                                
+#                                             ]
+#                                         ),
+#                                     ],
+#                                     style={'padding': '1%', 'backgroundColor': '#00ffff', 'border': '2px solid #000', 'borderRadius': '10px', 'width': '100%', 'height': 'auto'}
+#                                 )
+#                             ],
+#                             style={'flex': '1', 'width': '100%'} 
+#                         ),
+#                         # new info supp
+#                         # html.Div(id="all_info")
+#                     ],
+#                     style={'display': 'flex', 'flexDirection': 'row', 'width': '100%', 'marginTop': '20px'}  
+#                 )
+#             ],
+#             style={'display': 'flex', 'flexDirection': 'column'}
+#         )
+        
+# ])
+
+#             ],
+
+#             style={**style, 'borderRadius': 10, 'backgroundColor': 'white'}, size="100"
+
+#         ),
+
+       
+#     ]
+# )
