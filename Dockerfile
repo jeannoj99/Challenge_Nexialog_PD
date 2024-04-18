@@ -10,8 +10,9 @@ RUN apt update && \
 WORKDIR /app
 COPY . /app
 
-EXPOSE 5150
-
 RUN python3 -m pip install -r requirements.txt
 
-CMD bash -c ". launch.sh"
+WORKDIR /app/web_app
+
+CMD ["python3", "app.py"]
+
